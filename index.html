@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>焦慮工程 · Anxiety OS — 預測系統升級</title>
+<style>
+/* ── Variables ── */
+:root{
+  --bg:#F6F8FC;
+  --bg2:#FFFFFF;
+  --bg3:#EDF0F7;
+  --card:#FFFFFF;
+  --card2:#F0F3FA;
+  --border:#DDE3EE;
+  --border2:#C8D0E0;
+  --shadow:0 2px 12px rgba(60,80,130,.08);
+  --shadow2:0 6px 24px rgba(60,80,130,.12);
+
+  /* Brand blues */
+  --ink:#0C1428;
+  --ink2:#3A4A66;
+  --ink3:#7A88A6;
+  --ink4:#B0BCCE;
+
+  /* Accent */
+  --blue:#1A5FD4;
+  --blue2:#1245A8;
+  --blue-l:#E8F0FE;
+  --blue-ll:#F4F7FF;
+  --teal:#0B8FAC;
+  --teal-l:#E0F6FA;
+  --green:#0A8A5C;
+  --green-l:#E8F7EF;
+  --gold:#A87800;
+  --gold-l:#FFF8E1;
+  --orange:#C96A00;
+  --orange-l:#FFF0E0;
+  --red:#C42B20;
+  --red-l:#FEE8E6;
+  --purple:#6B21A8;
+  --purple-l:#F5F0FF;
+
+  --font:'Segoe UI','Microsoft JhengHei',Arial,sans-serif;
+  --r:10px;--r2:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
+
+/* ── Shell ── */
+.shell{display:flex;height:100vh;overflow:hidden;}
+
+/* ── Sidebar ── */
+.sidebar{
+  width:230px;flex-shrink:0;
+  background:var(--ink);
+  display:flex;flex-direction:column;overflow-y:auto;z-index:100;
+}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);}
+
+.logo{
+  padding:22px 18px 18px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(160deg,#0C1428 60%,#1A2E58);
+}
+.logo-en{font-size:9px;color:rgba(255,255,255,.45);letter-spacing:2.5px;font-weight:700;text-transform:uppercase;margin-bottom:5px;}
+.logo-zh{font-size:17px;font-weight:900;color:#fff;letter-spacing:-.3px;}
+.logo-tag{display:inline-block;margin-top:10px;padding:4px 11px;background:rgba(26,95,212,.35);border:1px solid rgba(26,95,212,.5);border-radius:20px;font-size:10px;color:#7BAEFF;font-weight:700;}
+
+.nav-sec{padding:7px 0;}
+.nav-lbl{font-size:8.5px;color:rgba(255,255,255,.25);letter-spacing:2px;text-transform:uppercase;padding:7px 18px 3px;}
+.nav-item{
+  display:flex;align-items:center;gap:9px;padding:9px 18px;
+  cursor:pointer;font-size:12.5px;color:rgba(255,255,255,.55);
+  transition:all .15s;border-left:2px solid transparent;
+}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.9);}
+.nav-item.on{background:rgba(26,95,212,.2);color:#fff;border-left-color:#3B7DFF;font-weight:700;}
+.nav-icon{font-size:15px;width:18px;text-align:center;}
+
+/* ── Main ── */
+.main{flex:1;overflow-y:auto;background:var(--bg);}
+
+/* ── Topbar ── */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(255,255,255,.95);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  padding:13px 26px;display:flex;align-items:center;justify-content:space-between;
+}
+.tb-title{font-size:15px;font-weight:800;color:var(--ink);}
+.tb-sub{font-size:11px;color:var(--ink3);margin-top:2px;}
+.tb-r{display:flex;align-items:center;gap:10px;}
+.chip{padding:5px 13px;border-radius:20px;font-size:11px;font-weight:700;background:var(--blue-l);color:var(--blue2);border:1px solid rgba(26,95,212,.15);}
+.chip-g{background:var(--green-l);color:var(--green);border-color:rgba(10,138,92,.15);}
+.chip-r{background:var(--red-l);color:var(--red);border-color:rgba(196,43,32,.15);}
+.av{width:33px;height:33px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--teal));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;cursor:pointer;}
+
+/* ── Pages ── */
+.page{padding:26px;display:none;}
+.page.on{display:block;}
+
+/* ── Bilingual helpers ── */
+.bi{display:flex;flex-direction:column;gap:1px;}
+.bi-en{font-size:9.5px;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;font-weight:600;}
+.bi-zh{font-size:13px;color:var(--ink);font-weight:700;}
+
+/* ── Section header ── */
+.sh{margin-bottom:22px;}
+.sh-label{display:inline-block;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+.sh-zh{font-size:22px;font-weight:900;color:var(--ink);line-height:1.2;margin-bottom:4px;}
+.sh-en{font-size:13px;color:var(--blue);font-weight:600;margin-bottom:4px;}
+.sh-sub{font-size:12.5px;color:var(--ink3);}
+
+/* ── Grid ── */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.row{display:flex;gap:14px;}
+.col{flex:1;}
+
+/* ── Stat card ── */
+.scard{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r2);
+  padding:18px;position:relative;overflow:hidden;
+  box-shadow:var(--shadow);
+  border-top:3px solid var(--sc,var(--blue));
+}
+.sc-lbl-en{font-size:9px;color:var(--ink3);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:6px;}
+.sc-num{font-size:34px;font-weight:900;line-height:1;margin-bottom:5px;}
+.sc-lbl-zh{font-size:12px;color:var(--ink2);}
+.sc-bar{background:var(--border);border-radius:3px;height:5px;overflow:hidden;margin-top:10px;}
+.sc-fill{height:100%;border-radius:3px;}
+.sc-delta{font-size:10px;font-weight:700;margin-top:6px;}
+
+/* ── Box ── */
+.box{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r2);padding:20px;margin-bottom:14px;
+  box-shadow:var(--shadow);
+}
+.box-t{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:3px;}
+.box-en{font-size:9.5px;color:var(--ink3);letter-spacing:.8px;text-transform:uppercase;font-weight:600;margin-bottom:14px;}
+
+/* ── Table ── */
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px;}
+.tbl th{background:var(--bg3);padding:9px 13px;text-align:left;font-size:9px;color:var(--ink3);letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid var(--border2);}
+.tbl td{padding:10px 13px;border-bottom:1px solid var(--border);color:var(--ink2);}
+.tbl td:first-child{font-weight:700;color:var(--ink);}
+.tbl tr:hover td{background:var(--bg3);}
+.tbl tr:last-child td{border-bottom:none;}
+
+/* ── Progress ── */
+.pbar{background:var(--border);border-radius:4px;height:6px;overflow:hidden;margin-top:5px;}
+.pfill{height:100%;border-radius:4px;}
+.pb{background:linear-gradient(90deg,var(--blue2),var(--blue));}
+.pg{background:linear-gradient(90deg,#0A7A50,var(--green));}
+.po{background:linear-gradient(90deg,#A05000,var(--orange));}
+.pr{background:linear-gradient(90deg,#A01A10,var(--red));}
+.pp{background:linear-gradient(90deg,#4A0E80,var(--purple));}
+.pt{background:linear-gradient(90deg,#0A6A80,var(--teal));}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .18s;}
+.btn-b{background:var(--blue);color:#fff;}
+.btn-b:hover{background:var(--blue2);}
+.btn-o{background:transparent;border:1.5px solid var(--border2);color:var(--ink2);}
+.btn-o:hover{border-color:var(--blue);color:var(--blue);}
+.btn-gold{background:linear-gradient(135deg,#8B6200,var(--gold));color:#fff;}
+
+/* ── Alerts ── */
+.alert{padding:12px 16px;border-radius:10px;font-size:13px;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px;line-height:1.55;}
+.a-b{background:var(--blue-l);border:1px solid rgba(26,95,212,.15);color:var(--blue2);}
+.a-g{background:var(--green-l);border:1px solid rgba(10,138,92,.15);color:var(--green);}
+.a-o{background:var(--orange-l);border:1px solid rgba(201,106,0,.2);color:var(--orange);}
+.a-r{background:var(--red-l);border:1px solid rgba(196,43,32,.15);color:var(--red);}
+.a-gold{background:var(--gold-l);border:1px solid rgba(168,120,0,.2);color:var(--gold);}
+.a-purple{background:var(--purple-l);border:1px solid rgba(107,33,168,.15);color:var(--purple);}
+
+/* ── Formula box ── */
+.formula{
+  background:var(--blue-ll);border:1px solid rgba(26,95,212,.15);
+  border-radius:var(--r);padding:16px 20px;margin:12px 0;
+}
+.form-label{font-size:9px;color:var(--blue);letter-spacing:2px;font-weight:800;text-transform:uppercase;margin-bottom:6px;}
+.form-zh{font-size:15px;font-weight:900;color:var(--ink);line-height:1.65;}
+.form-en{font-size:12px;color:var(--blue2);font-weight:600;margin-top:5px;line-height:1.5;}
+
+/* ── Quote card ── */
+.qcard{
+  background:var(--gold-l);border:1px solid rgba(168,120,0,.2);
+  border-radius:var(--r);padding:16px 18px;margin:10px 0;cursor:pointer;
+  transition:all .18s;
+}
+.qcard:hover{border-color:var(--gold);box-shadow:var(--shadow);}
+.qnum{font-size:9px;color:var(--gold);letter-spacing:1.5px;font-weight:800;margin-bottom:6px;text-transform:uppercase;}
+.qen{font-size:12px;color:var(--ink2);margin-bottom:5px;line-height:1.55;font-style:italic;}
+.qzh{font-size:14px;font-weight:800;color:var(--ink);line-height:1.5;}
+
+/* ── Flow ── */
+.flow{display:flex;flex-direction:column;}
+.fnode{display:flex;align-items:flex-start;gap:13px;position:relative;}
+.fnode::before{content:'';position:absolute;left:13px;top:30px;bottom:-8px;width:1px;background:var(--border2);}
+.fnode:last-child::before{display:none;}
+.fdot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;z-index:1;border:2px solid;}
+.fcw{padding-bottom:16px;flex:1;}
+.ften{font-size:9.5px;color:var(--ink3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px;}
+.ftzh{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.fdesc{font-size:12px;color:var(--ink2);line-height:1.5;}
+
+/* ── Tags ── */
+.tag{display:inline-block;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;margin:2px;}
+.tb{background:var(--blue-l);color:var(--blue2);}
+.tg{background:var(--green-l);color:var(--green);}
+.to{background:var(--orange-l);color:var(--orange);}
+.tr{background:var(--red-l);color:var(--red);}
+.tp{background:var(--purple-l);color:var(--purple);}
+.tt{background:var(--teal-l);color:var(--teal);}
+.tgold{background:var(--gold-l);color:var(--gold);}
+
+/* ── Compare ── */
+.cmp2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0;}
+.cmp-side{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
+.cmp-t{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+.cmp-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--ink2);}
+.cmp-row:last-child{border:none;}
+.cmp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:2px;}
+
+/* ── 100 Quotes grid ── */
+.quotes-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;margin-bottom:16px;}
+.quotes-scroll::-webkit-scrollbar{height:4px;}
+.quotes-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.quote-mini{min-width:200px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;flex-shrink:0;cursor:pointer;transition:all .18s;box-shadow:var(--shadow);}
+.quote-mini:hover{border-color:var(--gold);transform:translateY(-2px);}
+.qm-num{font-size:9px;color:var(--gold);font-weight:800;letter-spacing:1px;margin-bottom:7px;}
+.qm-zh{font-size:13px;font-weight:700;color:var(--ink);line-height:1.5;margin-bottom:5px;}
+.qm-en{font-size:11px;color:var(--ink3);line-height:1.45;font-style:italic;}
+
+/* ── Emotion grid ── */
+.emo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0;}
+.emo-btn{
+  background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r);
+  padding:14px 8px;text-align:center;cursor:pointer;transition:all .18s;
+}
+.emo-btn:hover,.emo-btn.on{border-color:var(--blue);background:var(--blue-l);}
+.emo-icon{font-size:24px;margin-bottom:6px;}
+.emo-zh{font-size:12px;font-weight:700;color:var(--ink);}
+.emo-en{font-size:9.5px;color:var(--ink3);margin-top:2px;}
+
+/* ── Anxiety source bars ── */
+.src-list{display:flex;flex-direction:column;gap:11px;margin-top:12px;}
+.src-row{display:flex;align-items:center;gap:10px;}
+.src-en{font-size:9px;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;width:85px;flex-shrink:0;}
+.src-zh{font-size:12px;font-weight:700;color:var(--ink);width:52px;flex-shrink:0;}
+.src-wrap{flex:1;}
+.src-pct{font-size:11px;font-weight:700;color:var(--ink3);width:32px;text-align:right;flex-shrink:0;}
+
+/* ── Free energy gauge ── */
+.fe-gauge{
+  display:flex;align-items:center;justify-content:center;
+  width:140px;height:140px;border-radius:50%;margin:0 auto 16px;
+  border:8px solid var(--border);position:relative;
+  background:conic-gradient(var(--red) 0% calc(var(--fe,83)*1%),var(--border) calc(var(--fe,83)*1%) 100%);
+}
+.fe-inner{
+  width:104px;height:104px;border-radius:50%;
+  background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.fe-num{font-size:28px;font-weight:900;color:var(--ink);}
+.fe-lbl{font-size:9px;color:var(--ink3);letter-spacing:.5px;}
+
+/* ── Scenario builder ── */
+.scenario-card{
+  background:var(--card2);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px;margin-bottom:10px;
+}
+.sc-t{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+
+/* ── Safety source ── */
+.safety-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0;}
+.saf-btn{
+  background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r);
+  padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;
+}
+.saf-btn:hover,.saf-btn.external{border-color:var(--red);}
+.saf-btn.internal{border-color:var(--green);}
+.saf-icon{font-size:22px;margin-bottom:6px;}
+.saf-zh{font-size:12px;font-weight:700;}
+.saf-en{font-size:9.5px;color:var(--ink3);}
+
+/* ── Journal ── */
+.jinput{
+  width:100%;background:var(--bg3);border:1.5px solid var(--border2);
+  border-radius:9px;padding:12px 14px;color:var(--ink);font-size:13px;
+  font-family:var(--font);outline:none;resize:vertical;min-height:72px;line-height:1.6;
+}
+.jinput:focus{border-color:var(--blue);background:#fff;}
+.jinput::placeholder{color:var(--ink4);}
+.jq{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:12px;}
+.jq-en{font-size:9px;color:var(--ink3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-weight:700;}
+.jq-zh{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:10px;}
+
+/* ── Probability slider ── */
+.prob-slider{
+  -webkit-appearance:none;width:100%;height:6px;
+  background:linear-gradient(90deg,var(--green),var(--blue),var(--orange),var(--red));
+  border-radius:3px;outline:none;margin:14px 0;
+}
+.prob-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--ink);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+
+/* ── AI chat ── */
+.chat-box{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;box-shadow:var(--shadow);}
+.chat-head{padding:13px 18px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.ch-en{font-size:9px;color:var(--ink3);letter-spacing:1.5px;font-weight:700;text-transform:uppercase;}
+.ch-zh{font-size:13px;font-weight:800;color:var(--ink);}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 5px rgba(10,138,92,.4);animation:pls 2s infinite;}
+@keyframes pls{0%,100%{opacity:1;}50%{opacity:.3;}}
+.chat-msgs{padding:16px;min-height:160px;max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;}
+.msg{display:flex;gap:9px;animation:fi .22s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+.msg.u{flex-direction:row-reverse;}
+.mbubble{max-width:74%;padding:11px 14px;border-radius:12px;font-size:13px;line-height:1.55;}
+.msg.ai .mbubble{background:var(--bg3);border:1px solid var(--border);color:var(--ink);}
+.msg.u .mbubble{background:var(--blue);color:#fff;}
+.mav{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:2px;}
+.msg.ai .mav{background:var(--bg3);border:1px solid var(--border);}
+.msg.u .mav{background:var(--blue);color:#fff;font-size:11px;}
+.chat-in-row{display:flex;gap:10px;padding:12px 16px;border-top:1px solid var(--border);background:var(--bg3);}
+.cin{flex:1;background:#fff;border:1.5px solid var(--border2);border-radius:9px;padding:10px 14px;color:var(--ink);font-size:13px;font-family:var(--font);outline:none;}
+.cin:focus{border-color:var(--blue);}
+.cin::placeholder{color:var(--ink4);}
+
+/* ── Misc ── */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+.div{height:1px;background:var(--border);margin:18px 0;}
+.mt8{margin-top:8px;}.mt14{margin-top:14px;}.mb8{margin-bottom:8px;}.mb14{margin-bottom:14px;}
+.fw7{font-weight:700;}.fw8{font-weight:800;}.fw9{font-weight:900;}
+.c-b{color:var(--blue);}.c-g{color:var(--green);}.c-r{color:var(--red);}
+.c-o{color:var(--orange);}.c-p{color:var(--purple);}.c-gold{color:var(--gold);}
+.c-t{color:var(--teal);}.c-ink{color:var(--ink);}.c-ink2{color:var(--ink2);}.c-ink3{color:var(--ink3);}
+.ldots::after{content:'...';animation:ld 1.5s steps(3,end) infinite;}
+@keyframes ld{0%{content:'.';}33%{content:'..';}66%{content:'...'}}
+b{color:var(--ink);}
+
+@media(max-width:800px){
+  .sidebar{width:0;overflow:hidden;}
+  .g4,.emo-grid,.safety-grid{grid-template-columns:repeat(2,1fr);}
+  .g3{grid-template-columns:1fr;}
+  .cmp2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-en">Anxiety OS · 焦慮工程</div>
+    <div class="logo-zh">焦慮工程</div>
+    <div class="logo-tag">預測 → 更新 → 安全感</div>
+  </div>
+  <nav>
+    <div class="nav-sec">
+      <div class="nav-lbl">Core · 核心</div>
+      <div class="nav-item on" onclick="go('home')"><span class="nav-icon">🏠</span>今日儀表板 Dashboard</div>
+      <div class="nav-item" onclick="go('model')"><span class="nav-icon">🧠</span>焦慮模型 Anxiety Model</div>
+      <div class="nav-item" onclick="go('formula')"><span class="nav-icon">⚡</span>升級公式 Upgrade Formula</div>
+    </div>
+    <div class="nav-sec">
+      <div class="nav-lbl">Diagnose · 診斷</div>
+      <div class="nav-item" onclick="go('diagnose')"><span class="nav-icon">🎯</span>焦慮診斷 Diagnose</div>
+      <div class="nav-item" onclick="go('map')"><span class="nav-icon">🗺</span>焦慮地圖 Anxiety Map</div>
+      <div class="nav-item" onclick="go('freedom')"><span class="nav-icon">📊</span>自由能儀表板 Free Energy</div>
+    </div>
+    <div class="nav-sec">
+      <div class="nav-lbl">Transform · 轉化</div>
+      <div class="nav-item" onclick="go('predict')"><span class="nav-icon">🔮</span>預測模型 Prediction</div>
+      <div class="nav-item" onclick="go('translate')"><span class="nav-icon">🔄</span>焦慮翻譯器 Translator</div>
+      <div class="nav-item" onclick="go('scenario')"><span class="nav-icon">🌪</span>最壞情境推演 Worst Case</div>
+      <div class="nav-item" onclick="go('safety')"><span class="nav-icon">🛡</span>安全感工程 Safety</div>
+    </div>
+    <div class="nav-sec">
+      <div class="nav-lbl">Build · 建立</div>
+      <div class="nav-item" onclick="go('update')"><span class="nav-icon">🔧</span>認知更新中心 Update</div>
+      <div class="nav-item" onclick="go('body')"><span class="nav-icon">💊</span>身體穩態 Body</div>
+      <div class="nav-item" onclick="go('compare')"><span class="nav-icon">⚖️</span>焦慮 vs 智慧 Wisdom</div>
+      <div class="nav-item" onclick="go('quotes')"><span class="nav-icon">💬</span>100金句 100 Quotes</div>
+      <div class="nav-item" onclick="go('ai')"><span class="nav-icon">🤖</span>AI教練 AI Coach</div>
+    </div>
+  </nav>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+<div class="topbar">
+  <div>
+    <div class="tb-title" id="tb-zh">🏠 今日焦慮儀表板</div>
+    <div class="tb-sub" id="tb-en">Anxiety OS · 目標不是消除焦慮，而是提升預測力</div>
+  </div>
+  <div class="tb-r">
+    <div class="chip chip-r">焦慮指數 <b id="anx-chip">72</b></div>
+    <div class="chip chip-g">安全感 <b>58%</b></div>
+    <div class="chip">預測力 <b>64%</b></div>
+    <div class="av">A</div>
+  </div>
+</div>
+
+<!-- ══ HOME ══ -->
+<div class="page on" id="page-home">
+  <div class="sh">
+    <div class="sh-label" style="background:var(--blue-l);color:var(--blue2)">ANXIETY OS · 焦慮工程</div>
+    <div class="sh-zh">今日儀表板</div>
+    <div class="sh-en">Today's Anxiety Dashboard</div>
+    <div class="sh-sub">焦慮不是敵人，是預測系統發出的通知 · Anxiety is not your enemy — it's your prediction system sending a signal.</div>
+  </div>
+
+  <!-- Core formula banner -->
+  <div class="formula" style="margin-bottom:20px;border-color:rgba(26,95,212,.25);background:linear-gradient(135deg,var(--blue-ll),#fff)">
+    <div class="form-label">Core Formula · 核心公式</div>
+    <div class="form-zh">焦慮 = 未知 ÷ 預測能力<br>自由能 = 不確定性 + 預測誤差</div>
+    <div class="form-en">Anxiety = Unknown ÷ Predictive Power &nbsp;·&nbsp; Free Energy = Uncertainty + Prediction Error</div>
+  </div>
+
+  <div class="g4">
+    <div class="scard" style="--sc:var(--red)">
+      <div class="sc-lbl-en">Anxiety Index · 焦慮指數</div>
+      <div class="sc-num c-r">72</div>
+      <div class="sc-lbl-zh">今日焦慮水平</div>
+      <div class="sc-bar"><div class="pfill pr" style="width:72%"></div></div>
+      <div class="sc-delta c-o">⚠ 中高 — 建議啟動預測訓練</div>
+    </div>
+    <div class="scard" style="--sc:var(--green)">
+      <div class="sc-lbl-en">Safety Index · 安全感指數</div>
+      <div class="sc-num c-g">58</div>
+      <div class="sc-lbl-zh">內在安全感</div>
+      <div class="sc-bar"><div class="pfill pg" style="width:58%"></div></div>
+      <div class="sc-delta c-o">↑ 可提升 — 建立內在模型</div>
+    </div>
+    <div class="scard" style="--sc:var(--blue)">
+      <div class="sc-lbl-en">Prediction Power · 預測穩定度</div>
+      <div class="sc-num c-b">64</div>
+      <div class="sc-lbl-zh">預測準確度</div>
+      <div class="sc-bar"><div class="pfill pb" style="width:64%"></div></div>
+      <div class="sc-delta c-g">↑ +8 本週提升</div>
+    </div>
+    <div class="scard" style="--sc:var(--teal)">
+      <div class="sc-lbl-en">Vitality · 生命力</div>
+      <div class="sc-num c-t">71</div>
+      <div class="sc-lbl-zh">整體生命力</div>
+      <div class="sc-bar"><div class="pfill pt" style="width:71%"></div></div>
+      <div class="sc-delta c-g">↑ +5 本週</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="box">
+        <div class="box-t">📋 今日三大任務 Daily Missions</div>
+        <div class="box-en">Small actions that lower free energy</div>
+        <div style="display:flex;flex-direction:column;gap:9px;">
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--green-l);border:1px solid rgba(10,138,92,.15);border-radius:10px;">
+            <span style="font-size:18px">✅</span>
+            <div style="flex:1"><div style="font-size:10px;color:var(--green);font-weight:700;letter-spacing:.5px;margin-bottom:2px">DONE · 完成</div><div style="font-size:13px;font-weight:700;color:var(--ink)">寫下三件我能掌控的事 Write 3 things I can control</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--card2);border:1px solid var(--border);border-radius:10px;">
+            <span style="font-size:18px">🔮</span>
+            <div style="flex:1"><div style="font-size:10px;color:var(--blue);font-weight:700;letter-spacing:.5px;margin-bottom:2px">PREDICT · 預測練習</div><div style="font-size:13px;font-weight:700;color:var(--ink)">對今日最大擔憂進行預測 Predict today's biggest worry</div></div>
+            <button class="btn btn-b" style="padding:6px 12px;font-size:11px" onclick="go('predict')">開始</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--card2);border:1px solid var(--border);border-radius:10px;">
+            <span style="font-size:18px">🔄</span>
+            <div style="flex:1"><div style="font-size:10px;color:var(--purple);font-weight:700;letter-spacing:.5px;margin-bottom:2px">UPDATE · 模型更新</div><div style="font-size:13px;font-weight:700;color:var(--ink)">每日認知更新三問 Daily 3-question model update</div></div>
+            <button class="btn btn-o" style="padding:6px 12px;font-size:11px" onclick="go('update')">前往</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="box">
+        <div class="box-t">⚡ 今日焦慮來源分析 Sources</div>
+        <div class="box-en">Where is your uncertainty coming from today?</div>
+        <div class="src-list">
+          <div class="src-row"><div class="src-zh">未來</div><div class="src-en">Future</div><div class="src-wrap"><div class="pbar"><div class="pfill pr" style="width:42%"></div></div></div><div class="src-pct c-r">42%</div></div>
+          <div class="src-row"><div class="src-zh">工作</div><div class="src-en">Work</div><div class="src-wrap"><div class="pbar"><div class="pfill po" style="width:28%"></div></div></div><div class="src-pct c-o">28%</div></div>
+          <div class="src-row"><div class="src-zh">關係</div><div class="src-en">Relation</div><div class="src-wrap"><div class="pbar"><div class="pfill pb" style="width:18%"></div></div></div><div class="src-pct c-b">18%</div></div>
+          <div class="src-row"><div class="src-zh">健康</div><div class="src-en">Health</div><div class="src-wrap"><div class="pbar"><div class="pfill pg" style="width:12%"></div></div></div><div class="src-pct c-g">12%</div></div>
+        </div>
+      </div>
+      <div class="box mt8">
+        <div class="box-t">💬 今日金句 Quote of the Day</div>
+        <div class="qcard" id="daily-qcard" onclick="newDailyQ()">
+          <div class="qnum" id="dq-num">#01 · TAP FOR NEW QUOTE · 點擊換一句</div>
+          <div class="qen" id="dq-en">Anxiety is not your enemy — it's a notification from your prediction system.</div>
+          <div class="qzh" id="dq-zh">焦慮不是敵人，是預測系統發出的通知。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 升級路徑 -->
+  <div class="box">
+    <div class="box-t">🔼 焦慮升級路徑 Anxiety Upgrade Path</div>
+    <div class="box-en">From unknown → prediction → action → safety · 未知 → 預測 → 行動 → 安全感</div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px">
+      <div style="padding:10px 14px;background:var(--red-l);border:1.5px solid rgba(196,43,32,.2);border-radius:9px;text-align:center;min-width:80px">
+        <div style="font-size:9px;color:var(--red);font-weight:800;letter-spacing:1px;margin-bottom:3px">UNKNOWN</div>
+        <div style="font-size:18px;margin:4px 0">❓</div>
+        <div style="font-size:12px;font-weight:800;color:var(--ink)">未知</div>
+      </div>
+      <div style="color:var(--ink3);font-size:18px;font-weight:700">→</div>
+      <div style="padding:10px 14px;background:var(--orange-l);border:1.5px solid rgba(201,106,0,.2);border-radius:9px;text-align:center;min-width:80px">
+        <div style="font-size:9px;color:var(--orange);font-weight:800;letter-spacing:1px;margin-bottom:3px">EXPLORE</div>
+        <div style="font-size:18px;margin:4px 0">🔍</div>
+        <div style="font-size:12px;font-weight:800;color:var(--ink)">探索</div>
+      </div>
+      <div style="color:var(--ink3);font-size:18px;font-weight:700">→</div>
+      <div style="padding:10px 14px;background:var(--gold-l);border:1.5px solid rgba(168,120,0,.2);border-radius:9px;text-align:center;min-width:80px">
+        <div style="font-size:9px;color:var(--gold);font-weight:800;letter-spacing:1px;margin-bottom:3px">UNDERSTAND</div>
+        <div style="font-size:18px;margin:4px 0">💡</div>
+        <div style="font-size:12px;font-weight:800;color:var(--ink)">理解</div>
+      </div>
+      <div style="color:var(--ink3);font-size:18px;font-weight:700">→</div>
+      <div style="padding:10px 14px;background:var(--blue-l);border:1.5px solid rgba(26,95,212,.2);border-radius:9px;text-align:center;min-width:80px">
+        <div style="font-size:9px;color:var(--blue);font-weight:800;letter-spacing:1px;margin-bottom:3px">PREDICT</div>
+        <div style="font-size:18px;margin:4px 0">🔮</div>
+        <div style="font-size:12px;font-weight:800;color:var(--ink)">預測</div>
+      </div>
+      <div style="color:var(--ink3);font-size:18px;font-weight:700">→</div>
+      <div style="padding:10px 14px;background:var(--teal-l);border:1.5px solid rgba(11,143,172,.2);border-radius:9px;text-align:center;min-width:80px">
+        <div style="font-size:9px;color:var(--teal);font-weight:800;letter-spacing:1px;margin-bottom:3px">ACTION</div>
+        <div style="font-size:18px;margin:4px 0">⚡</div>
+        <div style="font-size:12px;font-weight:800;color:var(--ink)">行動</div>
+      </div>
+      <div style="color:var(--ink3);font-size:18px;font-weight:700">→</div>
+      <div style="padding:10px 14px;background:var(--green-l);border:1.5px solid rgba(10,138,92,.2);border-radius:9px;text-align:center;min-width:80px">
+        <div style="font-size:9px;color:var(--green);font-weight:800;letter-spacing:1px;margin-bottom:3px">SAFETY</div>
+        <div style="font-size:18px;margin:4px 0">🛡</div>
+        <div style="font-size:12px;font-weight:800;color:var(--ink)">安全感</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODEL ══ -->
+<div class="page" id="page-model">
+  <div class="sh"><div class="sh-label" style="background:var(--blue-l);color:var(--blue2)">ANXIETY MODEL · 焦慮模型</div><div class="sh-zh">焦慮的本質</div><div class="sh-en">The True Nature of Anxiety</div><div class="sh-sub">焦慮不是問題，無法更新才是問題 · Anxiety isn't the problem — the inability to update is.</div></div>
+
+  <div class="formula">
+    <div class="form-label">First Principle · 第一性原理</div>
+    <div class="form-zh">焦慮 = 大腦偵測到預測誤差<br>安全感 = 大腦成功降低自由能</div>
+    <div class="form-en">Anxiety = brain detects a prediction error &nbsp;·&nbsp; Safety = brain successfully reduces free energy</div>
+  </div>
+
+  <div class="g2">
+    <div>
+      <div class="box">
+        <div class="box-t">⚙️ 焦慮生成機制 How Anxiety Forms</div>
+        <div class="box-en">Predictive coding — your brain's operating system</div>
+        <div class="flow mt8">
+          <div class="fnode"><div class="fdot" style="background:var(--blue-l);border-color:var(--blue);color:var(--blue)">1</div><div class="fcw"><div class="ften">PREDICTION</div><div class="ftzh">大腦做出預測</div><div class="fdesc">大腦每秒都在預測下一刻會發生什麼<br>The brain predicts what will happen next every second</div></div></div>
+          <div class="fnode"><div class="fdot" style="background:var(--teal-l);border-color:var(--teal);color:var(--teal)">2</div><div class="fcw"><div class="ften">REALITY INPUT</div><div class="ftzh">現實輸入</div><div class="fdesc">感官接收真實資訊<br>Sensory input arrives from the real world</div></div></div>
+          <div class="fnode"><div class="fdot" style="background:var(--orange-l);border-color:var(--orange);color:var(--orange)">3</div><div class="fcw"><div class="ften">PREDICTION ERROR</div><div class="ftzh">預測誤差增加</div><div class="fdesc">現實與預測不符 → 誤差訊號激增<br>Reality differs from prediction → error signal spikes</div></div></div>
+          <div class="fnode"><div class="fdot" style="background:var(--red-l);border-color:var(--red);color:var(--red)">4</div><div class="fcw"><div class="ften">FREE ENERGY SURGE</div><div class="ftzh">自由能暴增 → 焦慮出現</div><div class="fdesc">不確定性累積，大腦發出警報<br>Uncertainty accumulates; brain triggers alarm</div></div></div>
+          <div class="fnode"><div class="fdot" style="background:var(--gold-l);border-color:var(--gold);color:var(--gold)">5</div><div class="fcw"><div class="ften">RESPONSE CHOICE</div><div class="ftzh">選擇回應方式</div><div class="fdesc">逃避（加重）或探索（降低）<br>Avoid (amplifies) or explore (reduces)</div></div></div>
+          <div class="fnode"><div class="fdot" style="background:var(--green-l);border-color:var(--green);color:var(--green)">6</div><div class="fcw"><div class="ften">MODEL UPDATE</div><div class="ftzh">更新預測模型</div><div class="fdesc">新資訊整合 → 誤差降低 → 焦慮下降<br>New info integrated → errors reduce → anxiety drops</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="box">
+        <div class="box-t">📊 預測編碼解析 Predictive Coding</div>
+        <div class="box-en">Your brain is a prediction machine, not a reaction machine</div>
+        <div class="alert a-b mt8">🧠 大腦每天做三件事：<b>預測 → 接收資訊 → 修正預測</b><br>The brain does 3 things daily: Predict → Receive → Correct</div>
+        <div class="scenario-card">
+          <div class="sc-t" style="color:var(--red)">EXAMPLE · 範例</div>
+          <div class="flow">
+            <div class="fnode"><div class="fdot" style="background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-size:9px">前</div><div class="fcw" style="padding-bottom:12px"><div class="ften">ORIGINAL PREDICTION</div><div class="ftzh">大腦原本預測：這週很輕鬆</div></div></div>
+            <div class="fnode"><div class="fdot" style="background:var(--red-l);border-color:var(--red);color:var(--red);font-size:9px">突</div><div class="fcw" style="padding-bottom:12px"><div class="ften">UNEXPECTED REALITY</div><div class="ftzh">突然：老師說下週考試</div></div></div>
+            <div class="fnode"><div class="fdot" style="background:var(--orange-l);border-color:var(--orange);color:var(--orange);font-size:9px">誤</div><div class="fcw" style="padding-bottom:12px"><div class="ften">PREDICTION ERROR ↑</div><div class="ftzh">預測誤差暴增 → 焦慮產生</div></div></div>
+            <div class="fnode"><div class="fdot" style="background:var(--green-l);border-color:var(--green);color:var(--green);font-size:9px">解</div><div class="fcw"><div class="ften">SOLUTION</div><div class="ftzh">制定讀書計畫 → 預測更新 → 焦慮下降</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="box">
+        <div class="box-t">📋 焦慮一頁總表 Summary</div>
+        <table class="tbl">
+          <thead><tr><th>問題 Question</th><th>答案 Answer</th></tr></thead>
+          <tbody>
+            <tr><td>焦慮是什麼 What is anxiety?</td><td>預測警報 Prediction alarm</td></tr>
+            <tr><td>為何產生 Why it forms?</td><td>不確定性增加 Uncertainty increases</td></tr>
+            <tr><td>核心機制 Core mechanism?</td><td>預測誤差 Prediction error</td></tr>
+            <tr><td>控制節點 Key lever?</td><td>預測能力 Predictive power</td></tr>
+            <tr><td>修正方法 How to fix?</td><td>增加資訊+行動 Info + action</td></tr>
+            <tr><td>最佳策略 Best strategy?</td><td>建模而非擔心 Build models, not worries</td></tr>
+            <tr><td>最終目標 End goal?</td><td>安全感與智慧 Safety + wisdom</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FORMULA ══ -->
+<div class="page" id="page-formula">
+  <div class="sh"><div class="sh-label" style="background:var(--blue-l);color:var(--blue2)">UPGRADE FORMULA · 升級公式</div><div class="sh-zh">焦慮升級公式</div><div class="sh-en">The Anxiety-to-Wisdom Upgrade Formula</div></div>
+
+  <div class="formula" style="border-color:rgba(26,95,212,.25)">
+    <div class="form-label">Ultimate Formula · 終極公式</div>
+    <div class="form-zh" style="font-size:18px">未知 → 探索 → 理解 → 預測 → 行動 → 安全感<br>焦慮當 → 升級為 → 智慧</div>
+    <div class="form-en">Unknown → Explore → Understand → Predict → Act → Safety<br>Anxiety becomes → Wisdom</div>
+  </div>
+
+  <div class="g3">
+    <div class="box" style="border-top:3px solid var(--red)">
+      <div class="sc-lbl-en" style="color:var(--red)">ANXIETY MODE · 焦慮模式</div>
+      <div class="box-t c-r" style="margin-top:4px;font-size:16px">困在焦慮裡</div>
+      <div class="box-en">Stuck in the prediction error loop</div>
+      <div class="flow mt8">
+        <div class="fnode"><div class="fdot" style="background:var(--red-l);border-color:var(--red);color:var(--red);font-size:9px">1</div><div class="fcw" style="padding-bottom:10px"><div class="ftzh">遇到未知 Unknown event</div></div></div>
+        <div class="fnode"><div class="fdot" style="background:var(--red-l);border-color:var(--red);color:var(--red);font-size:9px">2</div><div class="fcw" style="padding-bottom:10px"><div class="ftzh">預測災難 Predict disaster</div></div></div>
+        <div class="fnode"><div class="fdot" style="background:var(--red-l);border-color:var(--red);color:var(--red);font-size:9px">3</div><div class="fcw" style="padding-bottom:10px"><div class="ftzh">逃避不確定 Avoid uncertainty</div></div></div>
+        <div class="fnode"><div class="fdot" style="background:var(--red-l);border-color:var(--red);color:var(--red);font-size:9px">4</div><div class="fcw"><div class="ftzh">焦慮加深 Anxiety deepens</div></div></div>
+      </div>
+    </div>
+    <div class="box" style="border-top:3px solid var(--blue)">
+      <div class="sc-lbl-en" style="color:var(--blue)">UPGRADE MODE · 升級模式</div>
+      <div class="box-t c-b" style="margin-top:4px;font-size:16px">把焦慮轉化為智慧</div>
+      <div class="box-en">Using prediction error to upgrade your model</div>
+      <div class="flow mt8">
+        <div class="fnode"><div class="fdot" style="background:var(--red-l);border-color:var(--red);color:var(--red);font-size:9px">⚡</div><div class="fcw" style="padding-bottom:10px"><div class="ftzh">接收焦慮訊號 Receive anxiety signal</div></div></div>
+        <div class="fnode"><div class="fdot" style="background:var(--orange-l);border-color:var(--orange);color:var(--orange);font-size:9px">❓</div><div class="fcw" style="padding-bottom:10px"><div class="ftzh">分析不確定來源 Locate uncertainty source</div></div></div>
+        <div class="fnode"><div class="fdot" style="background:var(--gold-l);border-color:var(--gold);color:var(--gold);font-size:9px">🔍</div><div class="fcw" style="padding-bottom:10px"><div class="ftzh">搜尋資訊 Gather information</div></div></div>
+        <div class="fnode"><div class="fdot" style="background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-size:9px">🔮</div><div class="fcw" style="padding-bottom:10px"><div class="ftzh">重新預測 Re-predict</div></div></div>
+        <div class="fnode"><div class="fdot" style="background:var(--teal-l);border-color:var(--teal);color:var(--teal);font-size:9px">⚡</div><div class="fcw" style="padding-bottom:10px"><div class="ftzh">採取行動 Take action</div></div></div>
+        <div class="fnode"><div class="fdot" style="background:var(--green-l);border-color:var(--green);color:var(--green);font-size:9px">🛡</div><div class="fcw"><div class="ftzh">安全感恢復 Safety restored</div></div></div>
+      </div>
+    </div>
+    <div class="box" style="border-top:3px solid var(--green)">
+      <div class="sc-lbl-en" style="color:var(--green)">WISDOM MODE · 智慧模式</div>
+      <div class="box-t c-g" style="margin-top:4px;font-size:16px">不確定中保持穩定</div>
+      <div class="box-en">Thriving within uncertainty</div>
+      <div class="alert a-g mt8">✅ 真正穩定的人不是沒有風暴<br>而是有穿越風暴的能力<br><span style="font-size:11px">Truly stable people don't avoid storms — they can sail through them.</span></div>
+      <div class="formula" style="background:var(--green-l);border-color:rgba(10,138,92,.2)">
+        <div class="form-label" style="color:var(--green)">Wisdom Formula · 智慧公式</div>
+        <div class="form-zh" style="font-size:14px;color:var(--ink)">智慧 = 預測精度 × 更新速度 × 行動能力</div>
+        <div class="form-en" style="color:var(--green)">Wisdom = Prediction Accuracy × Update Speed × Action Ability</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DIAGNOSE ══ -->
+<div class="page" id="page-diagnose">
+  <div class="sh"><div class="sh-label" style="background:var(--red-l);color:var(--red)">ANXIETY DIAGNOSIS · 焦慮診斷</div><div class="sh-zh">焦慮診斷中心</div><div class="sh-en">Anxiety Assessment Center</div><div class="sh-sub">找出你的焦慮類型和程度 · Identify your anxiety type and intensity</div></div>
+  <div class="box mb14">
+    <div class="box-t">🎯 焦慮評估 Anxiety Assessment</div>
+    <div class="box-en">Select all that apply to you recently · 選擇最近符合的狀態</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px" id="diag-checks">
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card2);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:.15s" onmouseenter="this.style.borderColor='var(--red)'" onmouseleave="this.style.borderColor='var(--border)'">
+        <input type="checkbox" style="width:16px;height:16px;accent-color:var(--red)">
+        <div><div style="font-size:9px;color:var(--ink3);letter-spacing:.5px;font-weight:700">FUTURE WORRY</div><div style="font-size:13px;font-weight:700;color:var(--ink)">容易擔心未來 Worry about the future</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card2);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:.15s" onmouseenter="this.style.borderColor='var(--red)'" onmouseleave="this.style.borderColor='var(--border)'">
+        <input type="checkbox" style="width:16px;height:16px;accent-color:var(--red)">
+        <div><div style="font-size:9px;color:var(--ink3);letter-spacing:.5px;font-weight:700">RUMINATION</div><div style="font-size:13px;font-weight:700;color:var(--ink)">反覆思考停不下來 Repetitive thinking</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card2);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:.15s" onmouseenter="this.style.borderColor='var(--red)'" onmouseleave="this.style.borderColor='var(--border)'">
+        <input type="checkbox" style="width:16px;height:16px;accent-color:var(--red)">
+        <div><div style="font-size:9px;color:var(--ink3);letter-spacing:.5px;font-weight:700">SLEEP RACING</div><div style="font-size:13px;font-weight:700;color:var(--ink)">睡前腦袋停不下來 Mind racing at night</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card2);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:.15s" onmouseenter="this.style.borderColor='var(--red)'" onmouseleave="this.style.borderColor='var(--border)'">
+        <input type="checkbox" style="width:16px;height:16px;accent-color:var(--red)">
+        <div><div style="font-size:9px;color:var(--ink3);letter-spacing:.5px;font-weight:700">FOREBODING</div><div style="font-size:13px;font-weight:700;color:var(--ink)">總覺得有事要發生 Sense of impending doom</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card2);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:.15s" onmouseenter="this.style.borderColor='var(--orange)'" onmouseleave="this.style.borderColor='var(--border)'">
+        <input type="checkbox" style="width:16px;height:16px;accent-color:var(--orange)">
+        <div><div style="font-size:9px;color:var(--ink3);letter-spacing:.5px;font-weight:700">FEAR OF FAILURE</div><div style="font-size:13px;font-weight:700;color:var(--ink)">害怕失敗 Fear of failing</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card2);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:.15s" onmouseenter="this.style.borderColor='var(--orange)'" onmouseleave="this.style.borderColor='var(--border)'">
+        <input type="checkbox" style="width:16px;height:16px;accent-color:var(--orange)">
+        <div><div style="font-size:9px;color:var(--ink3);letter-spacing:.5px;font-weight:700">FEAR OF REJECTION</div><div style="font-size:13px;font-weight:700;color:var(--ink)">害怕被拒絕 Fear of rejection</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card2);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:.15s" onmouseenter="this.style.borderColor='var(--blue)'" onmouseleave="this.style.borderColor='var(--border)'">
+        <input type="checkbox" style="width:16px;height:16px;accent-color:var(--blue)">
+        <div><div style="font-size:9px;color:var(--ink3);letter-spacing:.5px;font-weight:700">FEAR OF LOSS</div><div style="font-size:13px;font-weight:700;color:var(--ink)">害怕失去 Fear of losing what matters</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card2);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:.15s" onmouseenter="this.style.borderColor='var(--blue)'" onmouseleave="this.style.borderColor='var(--border)'">
+        <input type="checkbox" style="width:16px;height:16px;accent-color:var(--blue)">
+        <div><div style="font-size:9px;color:var(--ink3);letter-spacing:.5px;font-weight:700">NOT GOOD ENOUGH</div><div style="font-size:13px;font-weight:700;color:var(--ink)">害怕不夠好 Fear of inadequacy</div></div>
+      </label>
+    </div>
+    <button class="btn btn-b mt14" style="width:100%;font-size:14px" onclick="runDiagnose()">🎯 診斷我的焦慮類型 Diagnose My Anxiety Type</button>
+  </div>
+  <div class="box" id="diag-result" style="display:none">
+    <div class="box-t">📊 診斷結果 Diagnosis Result</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px">
+      <div style="background:var(--green-l);border:2px solid var(--green);border-radius:var(--r);padding:14px;text-align:center"><div style="font-size:22px;margin-bottom:6px">😌</div><div style="font-size:9px;color:var(--green);font-weight:800;margin-bottom:4px">MILD</div><div style="font-size:13px;font-weight:800;color:var(--ink)">輕度焦慮</div></div>
+      <div style="background:var(--blue-l);border:2px solid var(--blue);border-radius:var(--r);padding:14px;text-align:center" id="diag-type"><div style="font-size:22px;margin-bottom:6px">😰</div><div style="font-size:9px;color:var(--blue);font-weight:800;margin-bottom:4px">MODERATE</div><div style="font-size:13px;font-weight:800;color:var(--ink)">中度焦慮</div></div>
+      <div style="background:var(--orange-l);border:1.5px solid rgba(201,106,0,.25);border-radius:var(--r);padding:14px;text-align:center"><div style="font-size:22px;margin-bottom:6px">😨</div><div style="font-size:9px;color:var(--orange);font-weight:800;margin-bottom:4px">HIGH</div><div style="font-size:13px;font-weight:800;color:var(--ink)">高度焦慮</div></div>
+      <div style="background:var(--red-l);border:1.5px solid rgba(196,43,32,.2);border-radius:var(--r);padding:14px;text-align:center"><div style="font-size:22px;margin-bottom:6px">😱</div><div style="font-size:9px;color:var(--red);font-weight:800;margin-bottom:4px">CHRONIC</div><div style="font-size:13px;font-weight:800;color:var(--ink)">慢性焦慮</div></div>
+    </div>
+    <div class="formula mt14">
+      <div class="form-label">Your result · 你的結果</div>
+      <div class="form-zh" id="diag-msg">中度焦慮 Moderate Anxiety — 預測系統需要校準</div>
+      <div class="form-en" id="diag-action">建議：啟動預測模型訓練 · Recommended: activate prediction model training</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAP ══ -->
+<div class="page" id="page-map">
+  <div class="sh"><div class="sh-label" style="background:var(--blue-l);color:var(--blue2)">ANXIETY MAP · 焦慮地圖</div><div class="sh-zh">焦慮來源地圖</div><div class="sh-en">Mapping Your Anxiety Sources</div></div>
+  <div class="g2">
+    <div class="box">
+      <div class="box-t">🗺 六大焦慮類型 Six Types of Anxiety</div>
+      <div class="box-en">Each anxiety type points to a specific model gap</div>
+      <table class="tbl mt8">
+        <thead><tr><th>類型 Type</th><th>EN</th><th>核心恐懼 Core Fear</th><th>模型缺口 Model Gap</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tr">健康焦慮</span></td><td>Health</td><td>害怕生病 Fear of illness</td><td>身體預測模型不足</td></tr>
+          <tr><td><span class="tag to">財務焦慮</span></td><td>Financial</td><td>害怕沒錢 Fear of scarcity</td><td>資源預測模型不足</td></tr>
+          <tr><td><span class="tag tb">學業焦慮</span></td><td>Academic</td><td>害怕落後 Fear of falling behind</td><td>能力預測模型不足</td></tr>
+          <tr><td><span class="tag tp">工作焦慮</span></td><td>Work</td><td>害怕失敗 Fear of failure</td><td>表現預測模型不足</td></tr>
+          <tr><td><span class="tag tt">關係焦慮</span></td><td>Relational</td><td>害怕被拋棄 Fear of abandonment</td><td>關係預測模型不足</td></tr>
+          <tr><td><span class="tag tgold">存在焦慮</span></td><td>Existential</td><td>害怕沒意義 Fear of meaninglessness</td><td>意義預測模型不足</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box">
+      <div class="box-t">📊 我的焦慮地圖 My Anxiety Map</div>
+      <div class="box-en">Personal anxiety distribution today</div>
+      <div class="src-list mt8">
+        <div class="src-row"><div class="src-zh">未來不確定</div><div class="src-en">Future</div><div class="src-wrap"><div class="pbar"><div class="pfill pr" style="width:42%"></div></div></div><div class="src-pct c-r">42%</div></div>
+        <div class="src-row"><div class="src-zh">關係風險</div><div class="src-en">Relation</div><div class="src-wrap"><div class="pbar"><div class="pfill po" style="width:28%"></div></div></div><div class="src-pct c-o">28%</div></div>
+        <div class="src-row"><div class="src-zh">工作表現</div><div class="src-en">Work</div><div class="src-wrap"><div class="pbar"><div class="pfill pt" style="width:18%"></div></div></div><div class="src-pct c-t">18%</div></div>
+        <div class="src-row"><div class="src-zh">健康風險</div><div class="src-en">Health</div><div class="src-wrap"><div class="pbar"><div class="pfill pb" style="width:12%"></div></div></div><div class="src-pct c-b">12%</div></div>
+      </div>
+      <div class="alert a-b mt8">💡 主要焦慮來源：未來不確定性 (42%)<br>建議：建立未來預測模型 · Build a future prediction model first</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FREE ENERGY ══ -->
+<div class="page" id="page-freedom">
+  <div class="sh"><div class="sh-label" style="background:var(--purple-l);color:var(--purple)">FREE ENERGY · 自由能原理</div><div class="sh-zh">自由能儀表板</div><div class="sh-en">Free Energy Dashboard</div><div class="sh-sub">自由能越高焦慮越高，自由能越低安全感越高<br>Higher free energy = more anxiety · Lower free energy = more safety</div></div>
+  <div class="formula">
+    <div class="form-label">Free Energy Principle · 自由能原理</div>
+    <div class="form-zh">自由能 = 不確定性 + 預測誤差<br>降低自由能 = 降低焦慮的根本方法</div>
+    <div class="form-en">Free Energy = Uncertainty + Prediction Error &nbsp;·&nbsp; Reducing free energy = the fundamental way to reduce anxiety</div>
+  </div>
+  <div class="g2">
+    <div class="box">
+      <div class="box-t">📊 今日自由能 Today's Free Energy</div>
+      <div class="box-en">Your current uncertainty + prediction error level</div>
+      <div style="margin:20px 0;text-align:center">
+        <div class="fe-gauge" style="--fe:72"><div class="fe-inner"><div class="fe-num">72</div><div class="fe-lbl">FREE ENERGY</div></div></div>
+        <div class="alert a-r" style="margin-top:12px">⚠ 偏高 HIGH — 系統檢測到大量不確定性<br>System detects high uncertainty. Take action to reduce.</div>
+      </div>
+      <div class="box-t mt8">⚡ 三大降低方法 Three Ways to Reduce</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+        <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--blue-l);border:1px solid rgba(26,95,212,.15);border-radius:10px;">
+          <span style="font-size:20px">📚</span>
+          <div><div style="font-size:9.5px;color:var(--blue);font-weight:700;margin-bottom:2px">INCREASE INFORMATION · 增加資訊</div><div style="font-size:13px;font-weight:700;color:var(--ink)">搜尋資訊，減少未知 Gather info to reduce unknown</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--teal-l);border:1px solid rgba(11,143,172,.15);border-radius:10px;">
+          <span style="font-size:20px">⚡</span>
+          <div><div style="font-size:9.5px;color:var(--teal);font-weight:700;margin-bottom:2px">TAKE ACTION · 採取行動</div><div style="font-size:13px;font-weight:700;color:var(--ink)">行動產生回饋，降低誤差 Action generates feedback, reduces error</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--green-l);border:1px solid rgba(10,138,92,.15);border-radius:10px;">
+          <span style="font-size:20px">🔧</span>
+          <div><div style="font-size:9.5px;color:var(--green);font-weight:700;margin-bottom:2px">UPDATE MODEL · 更新模型</div><div style="font-size:13px;font-weight:700;color:var(--ink)">修正預測，回到秩序感 Update prediction, restore order</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="box">
+      <div class="box-t">📊 各分項自由能 Free Energy by Category</div>
+      <div class="src-list mt8">
+        <div class="src-row"><div class="src-zh">未來</div><div class="src-en">Future</div><div class="src-wrap"><div class="pbar"><div class="pfill pr" style="width:84%"></div></div></div><div class="src-pct c-r">84</div></div>
+        <div class="src-row"><div class="src-zh">工作</div><div class="src-en">Work</div><div class="src-wrap"><div class="pbar"><div class="pfill po" style="width:71%"></div></div></div><div class="src-pct c-o">71</div></div>
+        <div class="src-row"><div class="src-zh">關係</div><div class="src-en">Relation</div><div class="src-wrap"><div class="pbar"><div class="pfill pb" style="width:55%"></div></div></div><div class="src-pct c-b">55</div></div>
+        <div class="src-row"><div class="src-zh">健康</div><div class="src-en">Health</div><div class="src-wrap"><div class="pbar"><div class="pfill pg" style="width:38%"></div></div></div><div class="src-pct c-g">38</div></div>
+        <div class="src-row"><div class="src-zh">財務</div><div class="src-en">Finance</div><div class="src-wrap"><div class="pbar"><div class="pfill pt" style="width:48%"></div></div></div><div class="src-pct c-t">48</div></div>
+      </div>
+      <div class="alert a-r mt8">⚡ 最高自由能：未來不確定 (84)<br>建議立即：為「未來」建立一個具體的預測計畫<br>Action: Build a concrete prediction plan for the future</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PREDICT ══ -->
+<div class="page" id="page-predict">
+  <div class="sh"><div class="sh-label" style="background:var(--blue-l);color:var(--blue2)">PREDICTION MODEL · 預測模型</div><div class="sh-zh">預測模型訓練</div><div class="sh-en">Prediction Model Training</div><div class="sh-sub">預測越準，焦慮越少 · The more accurate your predictions, the less anxious you feel.</div></div>
+  <div class="box mb14">
+    <div class="box-t">🔮 焦慮預測轉化器 Anxiety-to-Prediction Transformer</div>
+    <div class="box-en">Enter your worry → System transforms it into a solvable prediction</div>
+    <div class="jq mt12">
+      <div class="jq-en">EVENT · 事件</div><div class="jq-zh">你在擔心什麼事？ What are you worried about?</div>
+      <textarea class="jinput" id="pred-event" placeholder="例如：下週要面試 / 考試 / 重要的會議... e.g. Job interview next week / exam / important meeting..."></textarea>
+    </div>
+    <div class="jq">
+      <div class="jq-en">BRAIN'S PREDICTION · 大腦預測</div><div class="jq-zh">你的大腦現在預測什麼？ What is your brain currently predicting?</div>
+      <textarea class="jinput" id="pred-brain" placeholder="例如：我一定會失敗 / 他一定不喜歡我... e.g. I will definitely fail / They won't like me..."></textarea>
+    </div>
+    <div class="jq">
+      <div class="jq-en">EVIDENCE SCORE · 證據評分</div>
+      <div class="jq-zh">這個預測有多少證據支持？ How much evidence supports this prediction? (0–100)</div>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:10px">
+        <input type="range" class="prob-slider" min="0" max="100" value="30" id="evid-slider" oninput="document.getElementById('evid-num').textContent=this.value">
+        <div style="font-size:22px;font-weight:900;color:var(--ink);width:50px;text-align:center" id="evid-num">30</div>
+      </div>
+    </div>
+    <div class="jq">
+      <div class="jq-en">SUCCESS EXPERIENCE · 成功經驗</div><div class="jq-zh">你有哪些相關的成功經驗？ What past successes are relevant?</div>
+      <textarea class="jinput" id="pred-success" placeholder="例如：上次面試我表現不錯 / 考試前我都有準備好... e.g. My last interview went well / I've prepared successfully before..."></textarea>
+    </div>
+    <button class="btn btn-b" style="width:100%;font-size:14px" onclick="runPredict()">🔮 重新建模 Re-build Prediction Model</button>
+  </div>
+  <div class="box" id="pred-result" style="display:none">
+    <div class="box-t">📊 更新後預測 Updated Prediction</div>
+    <div class="g3 mt12">
+      <div style="background:var(--red-l);border:1px solid rgba(196,43,32,.2);border-radius:var(--r);padding:16px;text-align:center">
+        <div style="font-size:10px;color:var(--red);font-weight:800;letter-spacing:1px;margin-bottom:8px">OLD PREDICTION · 原始預測</div>
+        <div style="font-size:28px;font-weight:900;color:var(--red)" id="pr-old">—%</div>
+        <div style="font-size:12px;color:var(--ink2);margin-top:6px">基於焦慮的預測<br>Anxiety-based prediction</div>
+      </div>
+      <div style="background:var(--blue-l);border:2px solid var(--blue);border-radius:var(--r);padding:16px;text-align:center">
+        <div style="font-size:10px;color:var(--blue);font-weight:800;letter-spacing:1px;margin-bottom:8px">UPDATED PREDICTION · 更新後</div>
+        <div style="font-size:28px;font-weight:900;color:var(--blue)" id="pr-new">—%</div>
+        <div style="font-size:12px;color:var(--ink2);margin-top:6px">基於證據的預測<br>Evidence-based prediction</div>
+      </div>
+      <div style="background:var(--green-l);border:1px solid rgba(10,138,92,.2);border-radius:var(--r);padding:16px;text-align:center">
+        <div style="font-size:10px;color:var(--green);font-weight:800;letter-spacing:1px;margin-bottom:8px">ANXIETY REDUCTION · 焦慮降低</div>
+        <div style="font-size:28px;font-weight:900;color:var(--green)" id="pr-drop">—%</div>
+        <div style="font-size:12px;color:var(--ink2);margin-top:6px">預測更新後的降幅<br>Post-update reduction</div>
+      </div>
+    </div>
+    <div class="formula mt12">
+      <div class="form-label">Insight · 洞察</div>
+      <div class="form-zh" id="pr-insight">預測更新中...</div>
+      <div class="form-en" id="pr-insight-en">Updating...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TRANSLATE ══ -->
+<div class="page" id="page-translate">
+  <div class="sh"><div class="sh-label" style="background:var(--teal-l);color:var(--teal)">ANXIETY TRANSLATOR · 焦慮翻譯器</div><div class="sh-zh">焦慮翻譯系統</div><div class="sh-en">Translate Anxiety → Signal → Need → Action</div><div class="sh-sub">焦慮不是詛咒，焦慮是訊號 · Anxiety is not a curse — it's a signal.</div></div>
+
+  <div class="box mb14">
+    <div class="box-t">🔄 選擇你的焦慮情境 Select Your Anxiety Scenario</div>
+    <div class="box-en">Each scenario translates anxiety into actionable insight</div>
+    <div class="emo-grid mt12" id="trans-grid">
+      <div class="emo-btn" onclick="translate(this,'exam')"><div class="emo-icon">📝</div><div class="emo-zh">考試焦慮</div><div class="emo-en">Exam</div></div>
+      <div class="emo-btn" onclick="translate(this,'interview')"><div class="emo-icon">💼</div><div class="emo-zh">面試焦慮</div><div class="emo-en">Interview</div></div>
+      <div class="emo-btn" onclick="translate(this,'relation')"><div class="emo-icon">💔</div><div class="emo-zh">關係焦慮</div><div class="emo-en">Relationship</div></div>
+      <div class="emo-btn" onclick="translate(this,'health')"><div class="emo-icon">🏥</div><div class="emo-zh">健康焦慮</div><div class="emo-en">Health</div></div>
+      <div class="emo-btn" onclick="translate(this,'future')"><div class="emo-icon">🔮</div><div class="emo-zh">未來焦慮</div><div class="emo-en">Future</div></div>
+    </div>
+  </div>
+
+  <div class="box" id="trans-result" style="display:none">
+    <div class="box-t" id="trans-title">🔄 焦慮翻譯結果 Translation Result</div>
+    <div class="g4 mt12" style="grid-template-columns:repeat(4,1fr)">
+      <div style="background:var(--red-l);border:1px solid rgba(196,43,32,.15);border-radius:var(--r);padding:14px">
+        <div style="font-size:9px;color:var(--red);font-weight:800;letter-spacing:1px;margin-bottom:6px">ANXIETY SIGNAL · 焦慮訊號</div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink)" id="tr-signal-zh">—</div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:5px;font-style:italic" id="tr-signal-en">—</div>
+      </div>
+      <div style="background:var(--gold-l);border:1px solid rgba(168,120,0,.15);border-radius:var(--r);padding:14px">
+        <div style="font-size:9px;color:var(--gold);font-weight:800;letter-spacing:1px;margin-bottom:6px">REAL NEED · 真實需求</div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink)" id="tr-need-zh">—</div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:5px;font-style:italic" id="tr-need-en">—</div>
+      </div>
+      <div style="background:var(--blue-l);border:1px solid rgba(26,95,212,.15);border-radius:var(--r);padding:14px">
+        <div style="font-size:9px;color:var(--blue);font-weight:800;letter-spacing:1px;margin-bottom:6px">ACTION STEP · 行動方向</div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink)" id="tr-act-zh">—</div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:5px;font-style:italic" id="tr-act-en">—</div>
+      </div>
+      <div style="background:var(--green-l);border:1px solid rgba(10,138,92,.15);border-radius:var(--r);padding:14px">
+        <div style="font-size:9px;color:var(--green);font-weight:800;letter-spacing:1px;margin-bottom:6px">OUTCOME · 預期結果</div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink)" id="tr-out-zh">—</div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:5px;font-style:italic" id="tr-out-en">—</div>
+      </div>
+    </div>
+    <div class="formula mt12">
+      <div class="form-label">Anxiety → Wisdom Formula · 轉化公式</div>
+      <div class="form-zh" id="tr-formula">焦慮 → 訊號 → 需求 → 行動 → 安全感</div>
+      <div class="form-en" id="tr-formula-en">Anxiety → Signal → Need → Action → Safety</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENARIO ══ -->
+<div class="page" id="page-scenario">
+  <div class="sh"><div class="sh-label" style="background:var(--orange-l);color:var(--orange)">WORST CASE · 最壞情境</div><div class="sh-zh">最壞情境推演</div><div class="sh-en">Worst-Case Scenario Planning</div><div class="sh-sub">恐懼常常不是危險，而是模型缺乏資訊 · Fear is often not danger — it's a model lacking information.</div></div>
+  <div class="box">
+    <div class="box-t">🌪 情境推演工具 Scenario Planner</div>
+    <div class="box-en">Defuse anxiety by planning for what you fear most</div>
+    <div class="jq mt12">
+      <div class="jq-en">THE FEAR · 擔心的事</div><div class="jq-zh">你最怕發生什麼？ What do you fear most?</div>
+      <textarea class="jinput" id="sc-event" placeholder="例如：考試失敗 / 被解雇 / 關係破裂 e.g. Failing the exam / Getting fired / Relationship ending"></textarea>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;padding:14px;background:var(--bg3);border-radius:var(--r);margin:12px 0">
+      <div style="flex:1"><div style="font-size:10px;color:var(--ink3);font-weight:700;margin-bottom:5px">ACTUAL PROBABILITY · 真實機率估計</div>
+        <input type="range" class="prob-slider" min="0" max="100" value="30" id="sc-prob" oninput="document.getElementById('sc-prob-num').textContent=this.value+'%'">
+      </div>
+      <div style="font-size:28px;font-weight:900;color:var(--ink);min-width:60px;text-align:center" id="sc-prob-num">30%</div>
+    </div>
+    <div class="g3" style="margin-top:14px">
+      <div class="jq"><div class="jq-en">PLAN A</div><div class="jq-zh">備案 A — 如果發生，第一選項？</div><textarea class="jinput" placeholder="如果最壞情況發生，我的第一個選項是... If it happens, my first option is..."></textarea></div>
+      <div class="jq"><div class="jq-en">PLAN B</div><div class="jq-zh">備案 B — 如果 A 行不通？</div><textarea class="jinput" placeholder="如果 A 行不通，我可以... If A doesn't work, I can..."></textarea></div>
+      <div class="jq"><div class="jq-en">PLAN C</div><div class="jq-zh">備案 C — 最後防線？</div><textarea class="jinput" placeholder="最壞的情況下，我還有... As a last resort, I have..."></textarea></div>
+    </div>
+    <button class="btn btn-b" style="width:100%;font-size:14px" onclick="runScenario()">🌪 執行推演 Run Scenario Planning</button>
+    <div class="formula mt12" id="sc-result" style="display:none">
+      <div class="form-label">Conclusion · 推演結論</div>
+      <div class="form-zh" id="sc-msg">推演中...</div>
+      <div class="form-en" id="sc-msg-en">Running analysis...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SAFETY ══ -->
+<div class="page" id="page-safety">
+  <div class="sh"><div class="sh-label" style="background:var(--green-l);color:var(--green)">SAFETY ENGINEERING · 安全感工程</div><div class="sh-zh">安全感工程</div><div class="sh-en">Building Genuine Internal Safety</div><div class="sh-sub">真正的安全感來自理解，而非控制 · True safety comes from understanding, not from control.</div></div>
+  <div class="formula">
+    <div class="form-label">Safety Formula · 安全感公式</div>
+    <div class="form-zh">安全感 = 內在預測能力 + 適應能力<br>（不是來自外部的保證）</div>
+    <div class="form-en">Safety = Internal Predictive Power + Adaptability &nbsp;·&nbsp; (NOT from external guarantees)</div>
+  </div>
+  <div class="box mb14">
+    <div class="box-t">🛡 你把安全感放在哪裡？ Where Is Your Safety Anchored?</div>
+    <div class="box-en">Tap each source to see if it's internal or external · 點擊查看穩定性</div>
+    <div class="safety-grid mt12">
+      <div class="saf-btn external" onclick="toggleSaf(this,'金錢 Money','外部 External','容易消失 Fragile')"><div class="saf-icon">💰</div><div class="saf-zh">金錢</div><div class="saf-en">Money</div></div>
+      <div class="saf-btn external" onclick="toggleSaf(this,'工作頭銜 Job Title','外部 External','容易消失 Fragile')"><div class="saf-icon">💼</div><div class="saf-zh">工作</div><div class="saf-en">Work</div></div>
+      <div class="saf-btn external" onclick="toggleSaf(this,'成績分數 Grades','外部 External','依賴評量 Dependent')"><div class="saf-icon">📊</div><div class="saf-zh">成績</div><div class="saf-en">Grades</div></div>
+      <div class="saf-btn external" onclick="toggleSaf(this,'他人評價 Others\' Opinions','外部 External','不可控 Uncontrollable')"><div class="saf-icon">👥</div><div class="saf-zh">評價</div><div class="saf-en">Opinions</div></div>
+      <div class="saf-btn external" onclick="toggleSaf(this,'外貌 Appearance','外部 External','會隨時間改變 Changes')"><div class="saf-icon">🪞</div><div class="saf-zh">外貌</div><div class="saf-en">Appearance</div></div>
+      <div class="saf-btn external" onclick="toggleSaf(this,'關係 Relationships','半外部 Semi-External','需要雙方維護 Mutual')"><div class="saf-icon">❤️</div><div class="saf-zh">關係</div><div class="saf-en">Relations</div></div>
+      <div class="saf-btn internal" onclick="toggleSaf(this,'預測能力 Predictive Power','內部 Internal ✓','穩固可建立 Stable &amp; Buildable')"><div class="saf-icon">🔮</div><div class="saf-zh">預測力</div><div class="saf-en">Prediction</div></div>
+      <div class="saf-btn internal" onclick="toggleSaf(this,'適應能力 Adaptability','內部 Internal ✓','越用越強 Gets stronger with use')"><div class="saf-icon">🔄</div><div class="saf-zh">適應力</div><div class="saf-en">Adaptability</div></div>
+      <div class="saf-btn internal" onclick="toggleSaf(this,'更新能力 Updating Ability','內部 Internal ✓','誤差越多越強 Grows from errors')"><div class="saf-icon">🔧</div><div class="saf-zh">更新力</div><div class="saf-en">Updating</div></div>
+      <div class="saf-btn internal" onclick="toggleSaf(this,'內在價值 Intrinsic Value','內部 Internal ✓','不依賴外部 Independent')"><div class="saf-icon">💎</div><div class="saf-zh">內在價值</div><div class="saf-en">Inner Value</div></div>
+      <div class="saf-btn internal" onclick="toggleSaf(this,'意義感 Sense of Meaning','內部 Internal ✓','最穩定的安全感來源 Most stable')"><div class="saf-icon">🌅</div><div class="saf-zh">意義感</div><div class="saf-en">Meaning</div></div>
+      <div class="saf-btn internal" onclick="toggleSaf(this,'成長能力 Growth Ability','內部 Internal ✓','持續擴大 Continuously expands')"><div class="saf-icon">🌱</div><div class="saf-zh">成長力</div><div class="saf-en">Growth</div></div>
+    </div>
+    <div class="formula" id="saf-info" style="display:none">
+      <div class="form-label" id="saf-type">—</div>
+      <div class="form-zh" id="saf-name">—</div>
+      <div class="form-en" id="saf-stability">—</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="box">
+      <div class="box-t">📊 安全感穩定度分析</div>
+      <div class="box-en">External vs internal safety distribution</div>
+      <div class="src-list mt8">
+        <div class="src-row"><div class="src-zh">外部安全感</div><div class="src-en">External</div><div class="src-wrap"><div class="pbar"><div class="pfill pr" style="width:80%"></div></div></div><div class="src-pct c-r">80%</div></div>
+        <div class="src-row"><div class="src-zh">內部安全感</div><div class="src-en">Internal</div><div class="src-wrap"><div class="pbar"><div class="pfill pg" style="width:20%"></div></div></div><div class="src-pct c-g">20%</div></div>
+      </div>
+      <div class="alert a-r mt8">⚠ 外部安全感佔比過高，極度脆弱<br>External safety dominates — highly fragile. Build internal safety.</div>
+    </div>
+    <div class="box">
+      <div class="box-t">🔧 建立內在安全感方法</div>
+      <div class="box-en">How to build genuine, unshakeable internal safety</div>
+      <div class="flow mt8">
+        <div class="fnode"><div class="fdot" style="background:var(--blue-l);border-color:var(--blue);color:var(--blue)">1</div><div class="fcw"><div class="ften">BUILD PREDICTION MODELS</div><div class="ftzh">建立更多領域的預測模型</div><div class="fdesc">了解越多，不確定越少 · More understanding = less uncertainty</div></div></div>
+        <div class="fnode"><div class="fdot" style="background:var(--teal-l);border-color:var(--teal);color:var(--teal)">2</div><div class="fcw"><div class="ften">PRACTICE UPDATING FAST</div><div class="ftzh">練習快速更新模型</div><div class="fdesc">失敗後快速分析 → 修正 · After failure: analyze fast → correct</div></div></div>
+        <div class="fnode"><div class="fdot" style="background:var(--green-l);border-color:var(--green);color:var(--green)">3</div><div class="fcw"><div class="ften">PROVE INNER CAPABILITY</div><div class="ftzh">積累內在勝任感</div><div class="fdesc">每次解決問題都增加內在安全感 · Each solved problem adds inner safety</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ UPDATE ══ -->
+<div class="page" id="page-update">
+  <div class="sh"><div class="sh-label" style="background:var(--purple-l);color:var(--purple)">COGNITIVE UPDATE · 認知更新</div><div class="sh-zh">認知更新中心</div><div class="sh-en">Daily Model Update Center</div><div class="sh-sub">停止問「為什麼是我」，開始問「哪個模型需要更新」<br>Stop asking "why me" — start asking "which model needs updating"</div></div>
+  <div class="box">
+    <div class="box-t">🔧 每日認知更新五問 Daily 5-Question Model Update</div>
+    <div class="box-en">5 minutes each day recalibrates your anxiety system</div>
+    <div class="jq mt14">
+      <div class="jq-en">Q1 · WORRY</div><div class="jq-zh">今天最擔心什麼？ What worries you most today?</div>
+      <textarea class="jinput" placeholder="誠實寫下來... Be honest..."></textarea>
+    </div>
+    <div class="jq">
+      <div class="jq-en">Q2 · WORST CASE</div><div class="jq-zh">最壞情況會是什麼？ What is the actual worst case?</div>
+      <textarea class="jinput" placeholder="真的想清楚最壞是什麼... Really think through the worst case..."></textarea>
+    </div>
+    <div class="jq">
+      <div class="jq-en">Q3 · MOST LIKELY</div><div class="jq-zh">最可能發生什麼？ What is most likely to happen?</div>
+      <textarea class="jinput" placeholder="基於現實的可能性... Based on realistic probability..."></textarea>
+    </div>
+    <div class="jq">
+      <div class="jq-en">Q4 · BEST CASE</div><div class="jq-zh">最好的情況是什麼？ What's the best-case scenario?</div>
+      <textarea class="jinput" placeholder="如果一切順利... If things go well..."></textarea>
+    </div>
+    <div class="jq">
+      <div class="jq-en">Q5 · BLIND SPOT</div><div class="jq-zh">我忽略了什麼資訊？ What information am I missing or ignoring?</div>
+      <textarea class="jinput" placeholder="哪些角度我還沒考慮到... What angles have I not considered..."></textarea>
+    </div>
+    <button class="btn btn-gold" style="width:100%;font-size:14px">✨ 儲存今日認知更新 Save Today's Cognitive Update</button>
+  </div>
+</div>
+
+<!-- ══ BODY ══ -->
+<div class="page" id="page-body">
+  <div class="sh"><div class="sh-label" style="background:var(--teal-l);color:var(--teal)">BODY HOMEOSTASIS · 身體穩態</div><div class="sh-zh">身體穩態中心</div><div class="sh-en">Body-Based Anxiety Reduction</div><div class="sh-sub">焦慮不只是心理，也是生理 · Anxiety is not only psychological — it's deeply physiological.</div></div>
+  <div class="alert a-b mb14">🧠 <b>核心原理：</b>睡眠不足 → 皮質醇↑ → 預測誤差更難修正 → 焦慮加深。修復身體是降低焦慮的根本路徑之一。<br><span style="font-size:11px">Poor sleep → cortisol↑ → harder to correct prediction errors → more anxiety. Fixing the body is a root-level anxiety solution.</span></div>
+  <div class="g3">
+    <div class="box" style="border-top:3px solid var(--blue)">
+      <div class="sc-lbl-en c-b">SLEEP SYSTEM · 睡眠系統</div>
+      <div class="box-t mt4">😴 深度恢復</div>
+      <div class="src-list mt8">
+        <div class="src-row"><div class="src-zh">睡眠品質</div><div class="src-en">Quality</div><div class="src-wrap"><div class="pbar"><div class="pfill pr" style="width:42%"></div></div></div><div class="src-pct c-r">42</div></div>
+      </div>
+      <div class="alert a-r mb8">⚠ 睡眠不足是焦慮的最大生理放大器<br>Sleep deprivation is the #1 physiological anxiety amplifier</div>
+      <table class="tbl"><thead><tr><th>補充 Supplement</th><th>作用 EN</th></tr></thead><tbody>
+        <tr><td>鎂 Magnesium</td><td>Nervous system calmer</td></tr>
+        <tr><td>GABA</td><td>Inhibitory neurotransmitter</td></tr>
+        <tr><td>L-茶胺酸 L-Theanine</td><td>Calm focus without drowsiness</td></tr>
+        <tr><td>褪黑激素 Melatonin</td><td>Circadian rhythm regulator</td></tr>
+      </tbody></table>
+    </div>
+    <div class="box" style="border-top:3px solid var(--teal)">
+      <div class="sc-lbl-en c-t">NERVOUS SYSTEM · 神經系統</div>
+      <div class="box-t mt4">🧠 神經穩定</div>
+      <div class="alert a-g mb8">✅ 自律神經是焦慮的生理控制器<br>The autonomic nervous system is the physiological controller of anxiety</div>
+      <table class="tbl"><thead><tr><th>補充 Supplement</th><th>作用 EN</th></tr></thead><tbody>
+        <tr><td>Omega-3</td><td>Anti-inflammatory · neural repair</td></tr>
+        <tr><td>B群 B Complex</td><td>Neurotransmitter synthesis</td></tr>
+        <tr><td>維D3 Vitamin D3</td><td>Mood stabilizer</td></tr>
+        <tr><td>鋅 Zinc</td><td>GABA receptor support</td></tr>
+      </tbody></table>
+    </div>
+    <div class="box" style="border-top:3px solid var(--green)">
+      <div class="sc-lbl-en c-g">GUT-BRAIN AXIS · 腸腦軸</div>
+      <div class="box-t mt4">🦠 腸腦連動</div>
+      <div class="alert a-o mb8">⚡ 90%的血清素在腸道產生，腸道健康直接影響焦慮<br>90% of serotonin is made in the gut. Gut health directly impacts anxiety.</div>
+      <table class="tbl"><thead><tr><th>補充 Supplement</th><th>作用 EN</th></tr></thead><tbody>
+        <tr><td>益生菌 Probiotics</td><td>Gut microbiome balance</td></tr>
+        <tr><td>丁酸 Butyrate</td><td>Gut lining repair</td></tr>
+        <tr><td>麩醯胺酸 Glutamine</td><td>Intestinal barrier support</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+  <div class="box">
+    <div class="box-t">📊 身體焦慮指標 Body Anxiety Indicators</div>
+    <div class="box-en">Physical indicators that amplify anxiety when imbalanced</div>
+    <div class="g4 mt12" style="grid-template-columns:repeat(4,1fr)">
+      <div style="text-align:center;padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:var(--r)"><div style="font-size:22px;margin-bottom:6px">😴</div><div style="font-size:10px;color:var(--ink3);margin-bottom:4px">SLEEP</div><div style="font-size:20px;font-weight:900;color:var(--red)">42</div><div class="pbar mt4"><div class="pfill pr" style="width:42%"></div></div></div>
+      <div style="text-align:center;padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:var(--r)"><div style="font-size:22px;margin-bottom:6px">🔥</div><div style="font-size:10px;color:var(--ink3);margin-bottom:4px">INFLAMMATION</div><div style="font-size:20px;font-weight:900;color:var(--orange)">61</div><div class="pbar mt4"><div class="pfill po" style="width:61%"></div></div></div>
+      <div style="text-align:center;padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:var(--r)"><div style="font-size:22px;margin-bottom:6px">🦠</div><div style="font-size:10px;color:var(--ink3);margin-bottom:4px">GUT HEALTH</div><div style="font-size:20px;font-weight:900;color:var(--orange)">55</div><div class="pbar mt4"><div class="pfill po" style="width:55%"></div></div></div>
+      <div style="text-align:center;padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:var(--r)"><div style="font-size:22px;margin-bottom:6px">⚡</div><div style="font-size:10px;color:var(--ink3);margin-bottom:4px">MITOCHONDRIA</div><div style="font-size:20px;font-weight:900;color:var(--blue)">68</div><div class="pbar mt4"><div class="pfill pb" style="width:68%"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ COMPARE ══ -->
+<div class="page" id="page-compare">
+  <div class="sh"><div class="sh-label" style="background:var(--blue-l);color:var(--blue2)">ANXIETY VS WISDOM · 焦慮與智慧</div><div class="sh-zh">焦慮模式 vs 智慧模式</div><div class="sh-en">Two Ways of Responding to the Same Event</div></div>
+  <div class="formula">
+    <div class="form-label">Core Insight · 核心洞察</div>
+    <div class="form-zh">消除焦慮不是目標，提升預測力才是<br>同一件事，焦慮者擔心，智慧者建模</div>
+    <div class="form-en">Eliminating anxiety is NOT the goal — upgrading prediction power IS.<br>Same event: anxious people worry, wise people build models.</div>
+  </div>
+  <div class="cmp2">
+    <div class="cmp-side" style="border-top:3px solid var(--red)">
+      <div class="cmp-t c-r">😰 ANXIETY MODE · 焦慮模式</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--red)"></div>一直擔心 Constant worrying</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--red)"></div>放大風險 Magnifying risks</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--red)"></div>反覆思考 Ruminating</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--red)"></div>逃避現實 Avoiding reality</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--red)"></div>消耗能量 Draining energy</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--red)"></div>尋找保證 Seeking guarantees</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--red)"></div>想控制一切 Trying to control everything</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--red)"></div>固守舊模型 Holding old models</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--red)"></div>追求確定感 Chasing certainty</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--red)"></div>預測災難 Predicting disaster</div>
+    </div>
+    <div class="cmp-side" style="border-top:3px solid var(--green)">
+      <div class="cmp-t c-g">🧠 WISDOM MODE · 智慧模式</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--green)"></div>持續建模 Continuous modeling</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--green)"></div>評估機率 Assessing probability</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--green)"></div>制定策略 Strategizing</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--green)"></div>面對現實 Facing reality</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--green)"></div>產生行動 Generating action</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--green)"></div>建立判斷力 Building judgment</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--green)"></div>提升適應力 Improving adaptability</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--green)"></div>更新模型 Updating models</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--green)"></div>學習不確定 Learning from uncertainty</div>
+      <div class="cmp-row"><div class="cmp-dot" style="background:var(--green)"></div>管理風險 Managing risk</div>
+    </div>
+  </div>
+  <div class="box">
+    <div class="box-t">⚡ 停止 vs 開始 Stop This / Start This</div>
+    <div class="box-en">Replacing anxiety patterns with wisdom patterns</div>
+    <table class="tbl mt8">
+      <thead><tr><th>❌ 停止 Stop (焦慮模式)</th><th>✅ 開始 Start (智慧模式)</th></tr></thead>
+      <tbody>
+        <tr><td>問「為什麼是我」 Ask "why me"</td><td>問「哪個模型需要更新」 Ask "which model needs updating"</td></tr>
+        <tr><td>對抗情緒 Fighting emotions</td><td>理解情緒 Understanding emotions</td></tr>
+        <tr><td>責怪自己 Blaming yourself</td><td>分析系統 Analyzing the system</td></tr>
+        <tr><td>放大問題 Magnifying problems</td><td>尋找節點 Finding the key node</td></tr>
+        <tr><td>陷入感受 Sinking into feelings</td><td>觀察結構 Observing the structure</td></tr>
+        <tr><td>逃避不確定 Avoiding uncertainty</td><td>學習不確定 Learning from uncertainty</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ QUOTES ══ -->
+<div class="page" id="page-quotes">
+  <div class="sh"><div class="sh-label" style="background:var(--gold-l);color:var(--gold)">100 WISDOM QUOTES · 100條金句</div><div class="sh-zh">焦慮工程 100 條金句</div><div class="sh-en">100 Bilingual Quotes on Anxiety, Prediction & Wisdom</div><div class="sh-sub">每一句話都是一次模型更新 · Each quote updates your prediction model</div></div>
+  <div class="quotes-scroll" id="q-scroll-1"></div>
+  <div class="quotes-scroll" id="q-scroll-2"></div>
+  <div class="quotes-scroll" id="q-scroll-3"></div>
+  <div class="box">
+    <div class="box-t">⭐ 精選十大金句 Top 10 Featured Quotes</div>
+    <div class="box-en">The ten most powerful reframes · 最具轉化力的十句</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px" id="featured-q"></div>
+  </div>
+</div>
+
+<!-- ══ AI ══ -->
+<div class="page" id="page-ai">
+  <div class="sh"><div class="sh-label" style="background:var(--blue-l);color:var(--blue2)">AI COACH · AI教練</div><div class="sh-zh">焦慮AI教練</div><div class="sh-en">Your Bilingual Anxiety & Prediction Coach</div><div class="sh-sub">不說「放輕鬆」，而是幫你升級預測模型 · No "just relax" — we upgrade your prediction model.</div></div>
+  <div class="chat-box mb14">
+    <div class="chat-head">
+      <div class="ai-dot"></div>
+      <div><div class="ch-en">ANXIETY COACH · POWERED BY CLAUDE · 雙語回覆</div><div class="ch-zh">焦慮工程 AI 教練</div></div>
+    </div>
+    <div class="chat-msgs" id="ai-msgs">
+      <div class="msg ai"><div class="mav">🤖</div><div class="mbubble">Welcome to Anxiety OS. I'm your bilingual coach. I won't tell you to "think positive" — instead, let's upgrade your prediction model together.<br><br>歡迎來到焦慮工程。我是你的雙語教練。我不說「正向思考就好」——而是和你一起升級你的預測模型。<br><br>你現在的焦慮是什麼？ What's your anxiety right now?</div></div>
+    </div>
+    <div class="chat-in-row">
+      <input class="cin" id="ai-in" placeholder="說說你的焦慮 / Share your anxiety..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAI();}">
+      <button class="btn btn-b" onclick="sendAI()">送出 ↵</button>
+    </div>
+  </div>
+  <div class="box">
+    <div class="box-t">⚡ 快速啟動話題 Quick Starters</div>
+    <div class="box-en">Tap to begin · 點擊直接開始</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+      <div class="tag tr" style="cursor:pointer;padding:8px 14px;font-size:12px" onclick="quickMsg('我的焦慮很嚴重，不知道怎麼辦')">😰 焦慮很嚴重 Severe anxiety</div>
+      <div class="tag tb" style="cursor:pointer;padding:8px 14px;font-size:12px" onclick="quickMsg('我害怕失敗，怎麼重建預測模型？')">🔮 害怕失敗 Fear of failure</div>
+      <div class="tag tg" style="cursor:pointer;padding:8px 14px;font-size:12px" onclick="quickMsg('我對未來完全沒有安全感，不知道怎麼辦')">🛡 沒有安全感 No sense of safety</div>
+      <div class="tag to" style="cursor:pointer;padding:8px 14px;font-size:12px" onclick="quickMsg('我反覆思考停不下來，怎麼讓大腦平靜？')">🔄 反覆思考 Rumination</div>
+      <div class="tag tp" style="cursor:pointer;padding:8px 14px;font-size:12px" onclick="quickMsg('我如何把焦慮轉化成智慧？')">💡 轉化智慧 Turn anxiety to wisdom</div>
+      <div class="tag tgold" style="cursor:pointer;padding:8px 14px;font-size:12px" onclick="quickMsg('如何建立真正的內在安全感？')">🌅 建立安全感 Build inner safety</div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+// ── Navigation ──
+const META = {
+  home:['🏠 今日焦慮儀表板','Anxiety OS · 目標不是消除焦慮，而是提升預測力'],
+  model:['🧠 焦慮模型','The True Nature of Anxiety · 焦慮的本質'],
+  formula:['⚡ 升級公式','Anxiety → Prediction → Wisdom Upgrade Formula'],
+  diagnose:['🎯 焦慮診斷中心','Anxiety Assessment Center · 找出你的焦慮類型'],
+  map:['🗺 焦慮來源地圖','Anxiety Source Mapping · 六大焦慮類型'],
+  freedom:['📊 自由能儀表板','Free Energy Dashboard · 自由能 = 不確定性 + 預測誤差'],
+  predict:['🔮 預測模型訓練','Prediction Model Training · 預測越準，焦慮越少'],
+  translate:['🔄 焦慮翻譯系統','Anxiety Translator · 焦慮 → 訊號 → 需求 → 行動'],
+  scenario:['🌪 最壞情境推演','Worst-Case Scenario Planning · 降低焦慮最快的方法'],
+  safety:['🛡 安全感工程','Safety Engineering · 真正的安全感來自理解而非控制'],
+  update:['🔧 認知更新中心','Daily Cognitive Update · 每日模型校準'],
+  body:['💊 身體穩態中心','Body-Based Anxiety Reduction · 焦慮也是生理問題'],
+  compare:['⚖️ 焦慮 vs 智慧','Anxiety Mode vs Wisdom Mode · 同樣事件，兩種回應'],
+  quotes:['💬 100條金句','100 Bilingual Quotes · 每句話都更新你的模型'],
+  ai:['🤖 焦慮AI教練','Bilingual Anxiety Coach · 升級你的預測模型'],
+};
+
+function go(p){
+  document.querySelectorAll('.page').forEach(c=>c.classList.remove('on'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('on'));
+  const pg=document.getElementById('page-'+p);if(pg)pg.classList.add('on');
+  const m=META[p]||['',''];
+  document.getElementById('tb-zh').textContent=m[0];
+  document.getElementById('tb-en').textContent=m[1];
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+p+"'"))n.classList.add('on');
+  });
+  if(p==='quotes')initQuotes();
+}
+
+// ── 100 Quotes ──
+const QUOTES = [
+  {zh:'焦慮不是敵人，是預測系統發出的通知。',en:'Anxiety is not your enemy — it\'s a notification from your prediction system.'},
+  {zh:'焦慮不是問題，無法更新才是問題。',en:'Anxiety is not the problem — the inability to update your model is.'},
+  {zh:'焦慮代表模型遇到未知。',en:'Anxiety means your model has encountered the unknown.'},
+  {zh:'焦慮是大腦感受到不確定性。',en:'Anxiety is your brain detecting uncertainty.'},
+  {zh:'焦慮是在提醒你校準預測。',en:'Anxiety is reminding you to recalibrate your predictions.'},
+  {zh:'焦慮是誤差訊號，不是人生判決書。',en:'Anxiety is an error signal, not a life verdict.'},
+  {zh:'焦慮越高，代表預測落差越大。',en:'Higher anxiety means a bigger gap between prediction and reality.'},
+  {zh:'焦慮是系統要求更新的聲音。',en:'Anxiety is your system requesting an update.'},
+  {zh:'焦慮不是弱，而是系統在警戒。',en:'Anxiety is not weakness — it\'s your system on alert.'},
+  {zh:'焦慮本質上是一種保護機制。',en:'Anxiety is fundamentally a protection mechanism.'},
+  {zh:'消除焦慮不是目標，提升預測力才是。',en:'Eliminating anxiety is not the goal — upgrading predictive power is.'},
+  {zh:'真正的安全感來自理解，而非控制。',en:'True safety comes from understanding, not from control.'},
+  {zh:'預測越準，焦慮越少。',en:'The more accurate your predictions, the less anxious you feel.'},
+  {zh:'理解越深，不確定越低。',en:'The deeper your understanding, the lower the uncertainty.'},
+  {zh:'模型越完整，情緒越穩定。',en:'The more complete your model, the more stable your emotions.'},
+  {zh:'焦慮降低的方法是增加可理解性。',en:'Reducing anxiety means increasing comprehensibility.'},
+  {zh:'未知減少，安全感增加。',en:'Less unknown means more safety.'},
+  {zh:'資訊越清晰，恐懼越下降。',en:'Clearer information leads to less fear.'},
+  {zh:'秩序感是焦慮的解藥。',en:'A sense of order is the antidote to anxiety.'},
+  {zh:'結構感是安全感的來源。',en:'A sense of structure is the source of safety.'},
+  {zh:'焦慮的人在預測災難。',en:'The anxious person predicts disaster.'},
+  {zh:'智慧的人在更新模型。',en:'The wise person updates their model.'},
+  {zh:'焦慮的人在逃避不確定。',en:'The anxious person avoids uncertainty.'},
+  {zh:'智慧的人在學習不確定。',en:'The wise person learns from uncertainty.'},
+  {zh:'焦慮的人想消除風險。',en:'The anxious person wants to eliminate risk.'},
+  {zh:'智慧的人學會管理風險。',en:'The wise person learns to manage risk.'},
+  {zh:'焦慮的人想知道答案。',en:'The anxious person wants to know the answer.'},
+  {zh:'智慧的人建立判斷力。',en:'The wise person builds judgment.'},
+  {zh:'焦慮的人追求保證。',en:'The anxious person chases guarantees.'},
+  {zh:'智慧的人追求適應。',en:'The wise person pursues adaptability.'},
+  {zh:'安全感不是外界給的。',en:'Safety does not come from the outside world.'},
+  {zh:'安全感是內在模型產生的。',en:'Safety is generated by your inner model.'},
+  {zh:'真正穩定的人不是沒有風暴。',en:'Truly stable people don\'t live without storms.'},
+  {zh:'而是有穿越風暴的能力。',en:'They have the capacity to navigate through storms.'},
+  {zh:'生命沒有絕對確定。',en:'Life contains no absolute certainty.'},
+  {zh:'只有更好的預測。',en:'Only better predictions.'},
+  {zh:'自由來自更新能力。',en:'Freedom comes from the ability to update.'},
+  {zh:'成熟來自修正能力。',en:'Maturity comes from the ability to correct.'},
+  {zh:'智慧來自校準能力。',en:'Wisdom comes from the ability to calibrate.'},
+  {zh:'成長來自誤差修正。',en:'Growth comes from correcting errors.'},
+  {zh:'焦慮不是叫你停下來。',en:'Anxiety is not asking you to stop.'},
+  {zh:'焦慮是叫你看清楚。',en:'Anxiety is asking you to see clearly.'},
+  {zh:'焦慮不是懲罰。',en:'Anxiety is not punishment.'},
+  {zh:'焦慮是導航。',en:'Anxiety is navigation.'},
+  {zh:'焦慮不是故障。',en:'Anxiety is not a malfunction.'},
+  {zh:'焦慮是回饋。',en:'Anxiety is feedback.'},
+  {zh:'焦慮不是敵人。',en:'Anxiety is not your enemy.'},
+  {zh:'焦慮是老師。',en:'Anxiety is your teacher.'},
+  {zh:'焦慮不是詛咒。',en:'Anxiety is not a curse.'},
+  {zh:'焦慮是訊號。',en:'Anxiety is a signal.'},
+  {zh:'大腦最怕混亂。',en:'The brain fears chaos most.'},
+  {zh:'所以會創造焦慮。',en:'So it creates anxiety as a response.'},
+  {zh:'焦慮其實在尋找秩序。',en:'Anxiety is actually searching for order.'},
+  {zh:'秩序感能降低自由能。',en:'A sense of order reduces free energy.'},
+  {zh:'理解能降低不確定。',en:'Understanding reduces uncertainty.'},
+  {zh:'預測能降低恐懼。',en:'Prediction reduces fear.'},
+  {zh:'行動能降低焦慮。',en:'Action reduces anxiety.'},
+  {zh:'回饋能降低盲點。',en:'Feedback reduces blind spots.'},
+  {zh:'更新能降低誤差。',en:'Updating reduces error.'},
+  {zh:'智慧能降低耗損。',en:'Wisdom reduces unnecessary drain.'},
+  {zh:'停止問為什麼是我。',en:'Stop asking "why is this happening to me."'},
+  {zh:'開始問哪個模型需要更新。',en:'Start asking "which model needs updating."'},
+  {zh:'停止對抗情緒。',en:'Stop fighting your emotions.'},
+  {zh:'開始理解情緒。',en:'Start understanding your emotions.'},
+  {zh:'停止責怪自己。',en:'Stop blaming yourself.'},
+  {zh:'開始分析系統。',en:'Start analyzing the system.'},
+  {zh:'停止放大問題。',en:'Stop magnifying the problem.'},
+  {zh:'開始尋找節點。',en:'Start finding the key node.'},
+  {zh:'停止陷入感受。',en:'Stop drowning in feelings.'},
+  {zh:'開始觀察結構。',en:'Start observing the structure.'},
+  {zh:'焦慮常常不是事情本身。',en:'Anxiety is often not about the event itself.'},
+  {zh:'而是對事情的預測。',en:'It\'s about your prediction of the event.'},
+  {zh:'痛苦常常不是現實。',en:'Suffering is often not about reality.'},
+  {zh:'而是對未來的想像。',en:'It\'s about your imagination of the future.'},
+  {zh:'恐懼常常不是危險。',en:'Fear is often not about actual danger.'},
+  {zh:'而是模型缺乏資訊。',en:'It\'s about your model lacking information.'},
+  {zh:'壓力常常不是工作。',en:'Stress is often not about the workload.'},
+  {zh:'而是失去掌控感。',en:'It\'s about losing a sense of control.'},
+  {zh:'失控感來自資訊不足。',en:'The feeling of losing control comes from insufficient information.'},
+  {zh:'資訊不足來自模型不完整。',en:'Insufficient information comes from an incomplete model.'},
+  {zh:'每一次焦慮都是升級機會。',en:'Every anxiety is an upgrade opportunity.'},
+  {zh:'每一次誤差都是學習機會。',en:'Every error is a learning opportunity.'},
+  {zh:'每一次失敗都是校準機會。',en:'Every failure is a calibration opportunity.'},
+  {zh:'每一次挫折都是更新機會。',en:'Every setback is an update opportunity.'},
+  {zh:'每一次不確定都是成長機會。',en:'Every uncertainty is a growth opportunity.'},
+  {zh:'每一次混亂都是重組機會。',en:'Every chaos is a reorganization opportunity.'},
+  {zh:'每一次恐懼都是探索機會。',en:'Every fear is an exploration opportunity.'},
+  {zh:'每一次迷惘都是重新定位機會。',en:'Every confusion is a repositioning opportunity.'},
+  {zh:'每一次痛苦都是理解機會。',en:'Every pain is an understanding opportunity.'},
+  {zh:'每一次挑戰都是進化機會。',en:'Every challenge is an evolution opportunity.'},
+  {zh:'焦慮降低的終極方法不是逃避。',en:'The ultimate way to reduce anxiety is not avoidance.'},
+  {zh:'而是提升理解力。',en:'It is upgrading your capacity to understand.'},
+  {zh:'安全感提升的終極方法不是控制。',en:'The ultimate way to build safety is not control.'},
+  {zh:'而是提升適應力。',en:'It is upgrading your adaptability.'},
+  {zh:'自由增加的終極方法不是擁有更多。',en:'The ultimate way to increase freedom is not owning more.'},
+  {zh:'而是更新更快。',en:'It is updating faster.'},
+  {zh:'智慧提升的終極方法不是知道更多。',en:'The ultimate way to grow wiser is not knowing more.'},
+  {zh:'而是修正更準。',en:'It is correcting more accurately.'},
+  {zh:'生命最強大的能力不是預知未來。',en:'Life\'s greatest power is not predicting the future.'},
+  {zh:'而是在未知中持續更新自己。',en:'It is continuously updating yourself within the unknown.'},
+];
+
+let qInited=false;
+function initQuotes(){
+  if(qInited)return;qInited=true;
+  const chunk=(arr,n)=>Array.from({length:Math.ceil(arr.length/n)},(_,i)=>arr.slice(i*n,(i+1)*n));
+  const rows=chunk(QUOTES,34);
+  ['q-scroll-1','q-scroll-2','q-scroll-3'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    (rows[i]||[]).forEach((q,j)=>{
+      const n=i*34+j+1;
+      el.innerHTML+=`<div class="quote-mini"><div class="qm-num">#${String(n).padStart(2,'0')}</div><div class="qm-zh">${q.zh}</div><div class="qm-en">${q.en}</div></div>`;
+    });
+  });
+  const picks=[0,6,10,20,30,40,50,60,80,99];
+  const fq=document.getElementById('featured-q');
+  picks.forEach(i=>{
+    const q=QUOTES[i]||QUOTES[0];
+    const n=i+1;
+    fq.innerHTML+=`<div class="qcard"><div class="qnum">#${String(n).padStart(2,'0')}</div><div class="qen">${q.en}</div><div class="qzh">${q.zh}</div></div>`;
+  });
+}
+
+// daily quote
+let qIdx=0;
+function newDailyQ(){
+  qIdx=(qIdx+1)%QUOTES.length;
+  const q=QUOTES[qIdx];
+  document.getElementById('dq-en').textContent=q.en;
+  document.getElementById('dq-zh').textContent=q.zh;
+  document.getElementById('dq-num').textContent=`#${String(qIdx+1).padStart(2,'0')} · TAP FOR NEW QUOTE · 點擊換一句`;
+}
+
+// ── Diagnose ──
+function runDiagnose(){
+  const checked=document.querySelectorAll('#diag-checks input:checked').length;
+  let msg,action;
+  if(checked<=2){msg='輕度焦慮 Mild Anxiety — 預測系統偶爾發出訊號';action='建議：建立每日預測練習習慣 · Build a daily prediction habit';}
+  else if(checked<=4){msg='中度焦慮 Moderate Anxiety — 預測系統頻繁發出訊號';action='建議：啟動預測模型訓練 · Activate prediction model training';}
+  else if(checked<=6){msg='高度焦慮 High Anxiety — 預測系統持續超載';action='建議：優先修復睡眠，再建立預測模型 · Fix sleep first, then build prediction models';}
+  else{msg='慢性焦慮 Chronic Anxiety — 預測系統長期失衡，需要系統性重建';action='建議：立即諮詢心理師，同步修復身體與認知 · Seek professional support + body + cognitive repair';}
+  document.getElementById('diag-msg').textContent=msg;
+  document.getElementById('diag-action').textContent=action;
+  document.getElementById('diag-result').style.display='block';
+  document.getElementById('diag-result').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ── Predict ──
+function runPredict(){
+  const event=document.getElementById('pred-event').value.trim();
+  if(!event){alert('請先輸入擔心的事件 Please enter an event');return;}
+  const evid=parseInt(document.getElementById('evid-slider').value);
+  const oldPred=100-evid+Math.floor(Math.random()*15);
+  const newPred=Math.min(85,Math.max(35,100-Math.round((100-evid)*0.4)));
+  const drop=Math.max(10,oldPred-newPred);
+  document.getElementById('pr-old').textContent=oldPred+'%';
+  document.getElementById('pr-new').textContent=newPred+'%';
+  document.getElementById('pr-drop').textContent='-'+drop+'%';
+  const insights=[
+    ['你的焦慮主要來自模型缺少成功經驗的支撐。整合過去的成功記憶後，預測更準確。','Your anxiety stems from your model lacking support from past successes. Integrating success memories improves prediction accuracy.'],
+    ['你把最壞情境當成了最可能情境。基於證據的重新預測顯示，成功可能性遠高於焦慮所告訴你的。','You conflated worst-case with most likely. Evidence-based reprediction shows much higher success probability than anxiety suggested.'],
+    ['焦慮的預測誤差來自「資訊不足」。你需要的不是放輕鬆，而是收集更多支持性證據。','The prediction error causing anxiety comes from insufficient information. What you need is not relaxation — it\'s more supporting evidence.'],
+  ];
+  const ins=insights[Math.floor(Math.random()*insights.length)];
+  document.getElementById('pr-insight').textContent=ins[0];
+  document.getElementById('pr-insight-en').textContent=ins[1];
+  document.getElementById('pred-result').style.display='block';
+  document.getElementById('pred-result').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ── Translate ──
+const TRANS={
+  exam:{
+    title:'📝 考試焦慮翻譯 Exam Anxiety Translation',
+    szh:'我怕考不好 I fear failing the exam',sen:'Fear of academic failure / judgment',
+    nzh:'需要充分準備和掌控感 Need adequate preparation and sense of control',nen:'Need to feel prepared and capable',
+    azh:'完成今日讀書計畫，設定具體複習時間 Complete today\'s study plan, set specific review times',aen:'Complete study plan, set specific review sessions',
+    ozh:'焦慮轉化為行動，掌控感提升 Anxiety transforms into action; sense of control increases',oen:'Anxiety becomes action; sense of control improves',
+    fzh:'考試焦慮 → 需要準備 → 開始複習 → 掌控感升 → 焦慮降',fen:'Exam anxiety → Need preparation → Start reviewing → Control rises → Anxiety drops',
+  },
+  interview:{
+    title:'💼 面試焦慮翻譯 Interview Anxiety Translation',
+    szh:'我怕表現不好，被拒絕 Fear of poor performance and rejection',sen:'Fear of judgment and rejection',
+    nzh:'需要表達自己的價值和準備感 Need to express value and feel prepared',nen:'Need to demonstrate value and feel ready',
+    azh:'研究公司，準備三個核心故事，練習自我介紹 Research company, prepare 3 core stories, practice introduction',aen:'Research company, prepare 3 stories, practice pitch',
+    ozh:'準備充分後，預測更新，焦慮自然降低 Full preparation updates prediction; anxiety naturally decreases',oen:'Preparation updates prediction; anxiety naturally drops',
+    fzh:'面試焦慮 → 需要準備 → 研究+練習 → 預測更新 → 安全感↑',fen:'Interview anxiety → Need preparation → Research + practice → Prediction updates → Safety↑',
+  },
+  relation:{
+    title:'💔 關係焦慮翻譯 Relationship Anxiety Translation',
+    szh:'我怕失去這段關係 Fear of losing this relationship',sen:'Fear of abandonment / losing connection',
+    nzh:'需要安全感和真實連結 Need genuine safety and authentic connection',nen:'Need authentic safety and real connection',
+    azh:'誠實表達感受，而非用焦慮控制 Express feelings honestly, not through anxious control',aen:'Express feelings honestly rather than control through anxiety',
+    ozh:'真實溝通建立真實安全感 Authentic communication builds authentic safety',oen:'Authentic communication builds real safety',
+    fzh:'關係焦慮 → 需要連結 → 誠實溝通 → 真實安全感↑',fen:'Relationship anxiety → Need connection → Honest communication → Real safety↑',
+  },
+  health:{
+    title:'🏥 健康焦慮翻譯 Health Anxiety Translation',
+    szh:'我怕生病 Fear of illness',sen:'Fear of loss of control over health',
+    nzh:'需要身體資訊和掌控感 Need body information and sense of control',nen:'Need health information and control',
+    azh:'去做健康檢查，獲得真實數據，停止猜測 Get a health check, get real data, stop guessing',aen:'Get a checkup, get real data, stop speculation',
+    ozh:'真實數據取代災難性預測，焦慮降低 Real data replaces catastrophic predictions; anxiety decreases',oen:'Real data replaces catastrophic predictions; anxiety drops',
+    fzh:'健康焦慮 → 需要資訊 → 做檢查 → 真實數據 → 焦慮降',fen:'Health anxiety → Need information → Get checkup → Real data → Anxiety drops',
+  },
+  future:{
+    title:'🔮 未來焦慮翻譯 Future Anxiety Translation',
+    szh:'我對未來完全沒有安全感 I feel no safety about the future',sen:'Fear of uncertainty and loss of control over future',
+    nzh:'需要一個可信賴的未來模型 Need a believable, trustworthy model of the future',nen:'Need a reliable prediction model for the future',
+    azh:'為未來寫出具體的三個備案 Write out 3 specific contingency plans for the future',aen:'Write 3 concrete contingency plans for the future',
+    ozh:'有備案的未來，自由能降低，安全感提升 Future with backup plans = lower free energy = higher safety',oen:'Future with plans = lower free energy = more safety',
+    fzh:'未來焦慮 → 需要模型 → 建立備案 → 自由能↓ → 安全感↑',fen:'Future anxiety → Need model → Build contingency plans → Free energy↓ → Safety↑',
+  },
+};
+
+function translate(el,key){
+  document.querySelectorAll('.emo-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  const d=TRANS[key];if(!d)return;
+  document.getElementById('trans-title').textContent=d.title;
+  document.getElementById('tr-signal-zh').textContent=d.szh;
+  document.getElementById('tr-signal-en').textContent=d.sen;
+  document.getElementById('tr-need-zh').textContent=d.nzh;
+  document.getElementById('tr-need-en').textContent=d.nen;
+  document.getElementById('tr-act-zh').textContent=d.azh;
+  document.getElementById('tr-act-en').textContent=d.aen;
+  document.getElementById('tr-out-zh').textContent=d.ozh;
+  document.getElementById('tr-out-en').textContent=d.oen;
+  document.getElementById('tr-formula').textContent=d.fzh;
+  document.getElementById('tr-formula-en').textContent=d.fen;
+  document.getElementById('trans-result').style.display='block';
+  document.getElementById('trans-result').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ── Scenario ──
+function runScenario(){
+  const ev=document.getElementById('sc-event').value.trim();
+  if(!ev){alert('請先輸入你最怕的事 Please enter your fear');return;}
+  const prob=document.getElementById('sc-prob').value;
+  const msgs=[
+    [`有了 A/B/C 三個備案，你已準備好應對這個情境。機率 ${prob}% 的最壞情境現在有了三條出路，自由能大幅降低。`,`With 3 backup plans (A, B, C), you are prepared for this scenario. The ${prob}% worst case now has three exits. Free energy drops significantly.`],
+    [`推演完成。你發現即使最壞情境發生，你也有路可走。焦慮的本質是「沒有出路」，而你剛剛為自己創造了三條出路。`,`Planning complete. You discovered that even if the worst happens, you have paths forward. Anxiety's core is "no way out" — you just created three exits.`],
+  ];
+  const m=msgs[Math.floor(Math.random()*msgs.length)];
+  document.getElementById('sc-msg').textContent=m[0];
+  document.getElementById('sc-msg-en').textContent=m[1];
+  document.getElementById('sc-result').style.display='block';
+  document.getElementById('sc-result').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ── Safety ──
+function toggleSaf(el,name,type,stability){
+  document.getElementById('saf-name').textContent=name;
+  document.getElementById('saf-type').textContent=type;
+  document.getElementById('saf-stability').textContent=stability;
+  document.getElementById('saf-info').style.display='block';
+}
+
+// ── AI Chat ──
+const SYS=`You are a bilingual (English + Traditional Chinese 繁體中文) Anxiety Coach based on the Predictive Coding and Free Energy Principle frameworks.
+
+Core Framework:
+- Anxiety = Prediction Error (not a character flaw)
+- Free Energy = Uncertainty + Prediction Error  
+- Anxiety signals where your model needs updating
+- The goal is NOT to eliminate anxiety — it's to upgrade predictive power
+- True safety comes from understanding, not control
+- Every anxiety is an upgrade opportunity
+
+Response style:
+- Always respond in BOTH English AND Traditional Chinese (clearly separated)
+- Never say "just relax" or "think positive"
+- Validate the anxiety signal first, then help identify the model gap, then suggest a concrete prediction/action step
+- Keep responses under 220 words total
+- Use the quote style occasionally: short, punchy bilingual wisdom lines`;
+
+async function sendAI(){
+  const inp=document.getElementById('ai-in');
+  const txt=inp.value.trim();if(!txt)return;
+  inp.value='';
+  const msgs=document.getElementById('ai-msgs');
+  msgs.innerHTML+=`<div class="msg u"><div class="mav" style="background:var(--blue);color:white;font-size:11px">你</div><div class="mbubble">${txt}</div></div>`;
+  const lid='l'+Date.now();
+  msgs.innerHTML+=`<div class="msg ai" id="${lid}"><div class="mav">🤖</div><div class="mbubble" style="color:var(--ink3)">分析中 Analyzing<span class="ldots"></span></div></div>`;
+  msgs.scrollTop=msgs.scrollHeight;
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:SYS,messages:[{role:'user',content:txt}]})
+    });
+    const d=await r.json();
+    const reply=(d.content?.[0]?.text||'請稍後重試 Please try again').replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>');
+    document.getElementById(lid).querySelector('.mbubble').innerHTML=reply;
+  }catch(e){
+    document.getElementById(lid).querySelector('.mbubble').textContent='連線失敗，請重試。Connection failed, please retry.';
+  }
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function quickMsg(txt){
+  document.getElementById('ai-in').value=txt;
+  go('ai');
+  setTimeout(sendAI,200);
+}
+
+go('home');
+</script>
+</body>
+</html>
